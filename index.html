@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1d5fa8">
+<meta name="robots" content="noindex, nofollow">
+<title>작업일보</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<script>
+/* ============================================================
+   설정
+   API_URL   : 구글 Apps Script 웹 앱 주소 (비워두면 내 컴퓨터에서만 연습 모드)
+   SITE_NAME : 화면에 보일 현장 이름
+   ※ 이 파일은 공개됩니다. 비밀번호를 여기에 적지 마세요.
+   ============================================================ */
+const API_URL = "https://script.google.com/macros/s/AKfycbxmA-U9SyPGKT3elVgmHysKRt-wGwOAq8o1xxtggSX_Tf-ikIjyNvP87K3pnyH-t3W8/exec";
+const SITE_NAME = "생산 현장";
+</script>
+<style>
+:root{
+  color-scheme:light;
+  --ground:#eef0ec;--surface:#ffffff;--surface-2:#f6f7f4;
+  --ink:#1b2129;--ink-2:#4a5360;--ink-3:#7a8390;--line:#d9ddd6;
+  --accent:#1d5fa8;--accent-ink:#ffffff;--accent-soft:#e3ecf7;
+  --ng:#b3471b;--ng-soft:#fbe9e0;--ok:#2f7a4a;--ok-soft:#e2f2e7;--warn:#8a6100;--warn-soft:#fbf1d6;--bar:#c9d6e6;
+  --band:#1d5fa8;--band-ink:#ffffff;--band-sub:#cfe0f5;--badge:#f2c14e;--badge-ink:#1c2533;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --r:10px;
+}
+body.is-admin{--band:#1c2533;--band-sub:#aab4c3}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme:dark;
+    --ground:#12161b;--surface:#1b2027;--surface-2:#222831;--ink:#e7eaee;--ink-2:#b3bac4;--ink-3:#838c98;
+    --line:#2f3640;--accent:#6aa5e8;--accent-ink:#0d1620;--accent-soft:#1c2c40;--ng:#f08a5d;--ng-soft:#3a2219;
+    --ok:#6cc48d;--ok-soft:#1a3024;--warn:#e7bd55;--warn-soft:#342a12;--bar:#2e4a6b;
+    --band:#1f4f86;--band-sub:#bcd6f3;
+  }
+  body.is-admin{--band:#05080c;--band-sub:#8d97a5}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;padding-bottom:env(safe-area-inset-bottom,0px)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+[hidden]{display:none!important}
+
+/* ---------- 상단 띠: 모드 표시 ---------- */
+.top{position:sticky;top:0;z-index:5}
+.band{background:var(--band);color:var(--band-ink);padding-top:env(safe-area-inset-top,0px)}
+.band-in{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.band-l{display:flex;flex-direction:column;min-width:0}
+.band .site{font-size:12px;color:var(--band-sub);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.band-title{display:flex;align-items:center;gap:8px}
+.band h1{margin:0;font-size:19px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+.mode{font-size:12px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:4px;white-space:nowrap;background:rgba(255,255,255,.18);color:var(--band-ink)}
+body.is-admin .mode{background:var(--badge);color:var(--badge-ink)}
+.band-r{display:flex;align-items:center;gap:10px;font-size:14px;min-width:0}
+.who{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--band-sub)}
+.band-btn{appearance:none;font:inherit;font-size:13px;font-weight:600;color:var(--band-ink);background:transparent;border:1px solid rgba(255,255,255,.45);border-radius:6px;padding:6px 12px;min-height:36px;cursor:pointer;white-space:nowrap}
+.tabs{background:var(--ground);border-bottom:1px solid var(--line)}
+.tabs-in{max-width:980px;margin:0 auto;padding-inline:16px;display:flex;gap:4px;overflow-x:auto}
+.tab{appearance:none;border:0;background:none;font:inherit;font-weight:600;color:var(--ink-3);padding:10px 14px;border-bottom:3px solid transparent;cursor:pointer;font-size:15px;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.band-btn:focus-visible{outline:2px solid var(--band-ink)}
+
+.notice{margin:16px 0 0;padding:12px 14px;border-radius:var(--r);background:var(--warn-soft);color:var(--warn);font-size:14px}
+
+/* ---------- 폼 ---------- */
+.sheet{margin-top:16px;display:flex;flex-direction:column;gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+.panel-title{margin:0;font-size:13px;font-weight:600;color:var(--ink-3);letter-spacing:.04em}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fld>span{font-size:13px;font-weight:600;color:var(--ink-2)}
+input,select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:48px;width:100%;min-width:0}
+textarea{min-height:72px;resize:vertical}
+input[type=number]{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;min-height:48px}
+.seg label{flex:1;display:flex;position:relative}
+.seg input{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;min-height:0}
+.seg span{flex:1;display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--ink-2);background:var(--surface-2);cursor:pointer}
+.seg input:checked+span{background:var(--accent);color:var(--accent-ink)}
+.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:-3px}
+
+.line{border-top:1px dashed var(--line);padding-top:12px;display:flex;flex-direction:column;gap:10px}
+.line:first-child{border-top:0;padding-top:0}
+.line-head{display:flex;justify-content:space-between;align-items:center}
+.line-no{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+.btn{appearance:none;font:inherit;font-weight:600;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 16px;min-height:44px;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);min-height:54px;font-size:17px}
+.btn.ghost{border-style:dashed;color:var(--accent)}
+.btn.small{min-height:34px;padding:4px 10px;font-size:13px}
+.btn.danger{color:var(--ng);border-color:var(--ng)}
+.linkish{appearance:none;background:none;border:0;font:inherit;font-size:13px;color:var(--ink-3);cursor:pointer;padding:6px;text-decoration:underline;text-underline-offset:3px}
+
+.mine{display:flex;flex-direction:column;gap:8px}
+.mine-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:var(--surface-2);border-radius:8px;font-size:14px}
+.mine-item .sub{color:var(--ink-3);font-size:13px}
+
+/* ---------- 관리자 로그인 ---------- */
+.login{display:flex;justify-content:center;padding-block:32px}
+.login-card{width:100%;max-width:380px;display:flex;flex-direction:column;gap:14px}
+.login-card h2{margin:0;font-size:22px;letter-spacing:-.01em}
+.err{margin:0;padding:10px 12px;border-radius:8px;background:var(--ng-soft);color:var(--ng);font-size:14px}
+.check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-2);cursor:pointer;min-height:40px}
+.check input{width:22px;height:22px;min-height:0;margin:0;accent-color:var(--accent)}
+
+/* ---------- 관리자 현황 ---------- */
+.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.kpi{background:var(--surface);padding:12px 14px}
+.kpi .k{font-size:12px;color:var(--ink-3);font-weight:600;letter-spacing:.03em}
+.kpi .v{font-family:var(--mono);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.kpi .v.ng{color:var(--ng)}
+.kpi .s{font-size:12px;color:var(--ink-3)}
+.missing{padding:10px 14px;border-radius:var(--r);background:var(--warn-soft);color:var(--warn);font-size:14px}
+.missing.ok{background:var(--ok-soft);color:var(--ok)}
+.proc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.proc-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px;padding:12px 16px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+.proc-head h3{margin:0;font-size:16px}
+.proc-stats{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--ink-2)}
+.proc-stats b{font-family:var(--mono);color:var(--ink);font-weight:600}
+.proc-stats .ngv{color:var(--ng)}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;color:var(--ink-3);font-weight:600;letter-spacing:.03em}
+td.r,th.r{text-align:right}
+tr:last-child td{border-bottom:0}
+.barcell{min-width:90px;width:30%}
+.bar{height:8px;border-radius:4px;background:var(--bar);position:relative}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:4px;background:var(--accent)}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:99px;margin-left:6px;vertical-align:1px;background:var(--warn-soft);color:var(--warn)}
+.ngtxt{color:var(--ng)}
+.muted{color:var(--ink-3)}
+.empty{padding:28px 16px;text-align:center;color:var(--ink-3);background:var(--surface);border:1px dashed var(--line);border-radius:var(--r)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.section-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-top:6px}
+.section-h h2{margin:0;font-size:16px}
+.hint{font-size:13px;color:var(--ink-3);margin:0}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:12px 18px;border-radius:10px;font-weight:600;font-size:15px;max-width:calc(100% - 32px);z-index:20}
+
+@media (max-width:640px){
+  .filters{grid-template-columns:1fr 1fr}
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi .v{font-size:20px}
+  .who{display:none}
+}
+@media (prefers-reduced-motion:no-preference){.btn,.tab,.seg span{transition:background-color .15s,color .15s,border-color .15s}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="band">
+    <div class="band-in">
+      <div class="band-l">
+        <span class="site" id="siteName"></span>
+        <div class="band-title"><h1>작업일보</h1><span class="mode" id="modeLabel">작업자 모드</span></div>
+      </div>
+      <div class="band-r">
+        <span class="who" id="who" hidden></span>
+        <button type="button" class="band-btn" id="toAdmin">관리자</button>
+        <button type="button" class="band-btn" id="logout" hidden>로그아웃</button>
+      </div>
+    </div>
+  </div>
+  <nav class="tabs" id="adminTabs" hidden>
+    <div class="tabs-in" role="tablist">
+      <button class="tab" role="tab" id="t-status" data-tab="status" aria-selected="true">공정별 현황</button>
+      <button class="tab" role="tab" id="t-settings" data-tab="settings" aria-selected="false">설정</button>
+    </div>
+  </nav>
+</header>
+
+<div class="wrap">
+  <p class="notice" id="demoNotice" hidden>연습 모드입니다. 아직 구글 시트에 연결되지 않아서 입력한 내용이 이 컴퓨터에만 저장돼요.</p>
+  <p class="notice" id="noServer" hidden>아직 서버에 연결되지 않았습니다. 관리자에게 문의하세요.</p>
+
+  <!-- ============ 작업자: 실적 입력 (로그인 없음) ============ -->
+  <section id="workerView">
+    <form id="reportForm" class="sheet" novalidate>
+      <div class="panel">
+        <label class="fld"><span>작업자 이름</span><input id="f-worker" autocomplete="name" placeholder="이름 입력" maxlength="30"></label>
+        <div class="row2">
+          <label class="fld"><span>작업일자</span><input type="date" id="f-date"></label>
+          <div class="fld"><span>근무조</span>
+            <div class="seg" role="radiogroup" aria-label="근무조">
+              <label><input type="radio" name="shift" id="s-day" value="주간" checked><span>주간</span></label>
+              <label><input type="radio" name="shift" id="s-night" value="야간"><span>야간</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="panel-title">오늘 한 작업</p>
+        <div id="lines"></div>
+        <button type="button" class="btn ghost" id="addLine">+ 다른 공정·품번 추가</button>
+      </div>
+
+      <div class="panel">
+        <label class="fld"><span>특이사항 (설비 고장, 자재 대기 등)</span><textarea id="f-note" placeholder="없으면 비워두세요"></textarea></label>
+      </div>
+
+      <button type="submit" class="btn primary" id="submitBtn">실적 제출</button>
+    </form>
+
+    <div class="panel" style="margin-top:14px" id="mineWrap" hidden>
+      <p class="panel-title">이 휴대폰에서 제출한 실적 (선택한 날짜)</p>
+      <div class="mine" id="mine"></div>
+      <p class="hint">잘못 적었으면 삭제한 뒤 다시 제출하세요.</p>
+    </div>
+  </section>
+
+  <!-- ============ 관리자 로그인 ============ -->
+  <section id="loginView" hidden>
+    <div class="login">
+      <form class="login-card" id="loginForm" novalidate>
+        <h2>관리자 로그인</h2>
+        <div class="panel">
+          <label class="fld"><span>아이디</span><input id="lg-id" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+          <label class="fld"><span>비밀번호</span><input id="lg-pw" type="password" autocomplete="current-password"></label>
+          <label class="check"><input type="checkbox" id="lg-keep"> 이 기기에서 로그인 유지</label>
+          <p class="err" id="lg-err" role="alert" hidden></p>
+          <button type="submit" class="btn primary" id="lg-btn">로그인</button>
+        </div>
+        <button type="button" class="linkish" id="backToWorker">← 실적 입력 화면으로</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ 관리자: 공정별 현황 ============ -->
+  <section id="statusView" hidden>
+    <div class="sheet">
+      <div class="filters">
+        <label class="fld"><span>시작일</span><input type="date" id="a-from"></label>
+        <label class="fld"><span>종료일</span><input type="date" id="a-to"></label>
+        <label class="fld"><span>근무조</span><select id="a-shift"><option value="">전체</option><option>주간</option><option>야간</option></select></label>
+        <label class="fld"><span>공정</span><select id="a-proc"><option value="">전체 공정</option></select></label>
+      </div>
+      <div class="actions"><button type="button" class="btn small" id="refresh">새로고침</button><span class="hint" id="updated"></span></div>
+      <div class="kpis" id="kpis"></div>
+      <div id="missing"></div>
+      <div id="procList" class="sheet" style="margin-top:0"></div>
+
+      <div class="section-h"><h2>입력된 실적 전체</h2>
+        <div class="actions">
+          <button type="button" class="btn small" id="copyTsv">엑셀에 붙여넣기용 복사</button>
+          <button type="button" class="btn small" id="saveCsv">CSV 파일 저장</button>
+        </div>
+      </div>
+      <div class="proc"><div class="tbl-wrap"><table id="rawTbl"></table></div></div>
+    </div>
+  </section>
+
+  <!-- ============ 관리자: 설정 ============ -->
+  <section id="settingsView" hidden>
+    <div class="sheet">
+      <div class="panel">
+        <label class="fld"><span>공정 목록 (한 줄에 하나)</span><textarea id="s-procs" rows="7"></textarea></label>
+        <label class="fld"><span>작업자 명단 (한 줄에 하나, 비워도 됨)</span><textarea id="s-workers" rows="7" placeholder="명단을 넣으면 현황에서 미제출자를 알려줍니다. 작업자가 입력하는 이름과 똑같이 적으세요."></textarea></label>
+        <button type="button" class="btn primary" id="saveCfg">설정 저장</button>
+      </div>
+      <p class="hint">관리자 아이디·비밀번호는 구글 시트의 ‘관리자’ 탭에서 바꿀 수 있어요.</p>
+      <div class="panel" id="demoPanel" hidden>
+        <p class="panel-title">연습 데이터</p>
+        <p class="hint">이 컴퓨터에 저장된 연습용 실적을 모두 지웁니다.</p>
+        <div class="actions"><button type="button" class="btn danger" id="clearDemo">연습 데이터 지우기</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const IS_LOCAL = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+const DEMO = !API_URL && IS_LOCAL;
+const DEFAULT_PROCS = ["절단·압착", "서브조립", "조립", "통전검사", "외관검사·포장"];
+
+/* ---------- 작은 도구들 ---------- */
+function mkStore(kind){ return {
+  get(k){ try { return window[kind].getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { window[kind].setItem(k,v); } catch(e){} },
+  del(k){ try { window[kind].removeItem(k); } catch(e){} }
+}; }
+const local = mkStore('localStorage'), sess = mkStore('sessionStorage');
+const pad = x => String(x).padStart(2, '0');
+const today = () => { const d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+const nowText = () => { const d = new Date(); return today() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const n = v => { const x = parseFloat(v); return isFinite(x) && x > 0 ? x : 0; };
+const fmt = v => Math.round(v).toLocaleString('ko-KR');
+const pct = (ng, qty) => (qty + ng) > 0 ? (ng / (qty + ng) * 100).toFixed(2) + '%' : '–';
+const rid = () => Math.random().toString(36).slice(2, 10);
+
+// 이 휴대폰을 구별하는 키: 내가 낸 실적만 다시 보고 지울 수 있게
+let deviceKey = local.get('deviceKey');
+if (!deviceKey) { deviceKey = rid() + rid() + rid(); local.set('deviceKey', deviceKey); }
+
+let toastT;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2800); }
+
+/* ---------- 서버 연결 (구글 Apps Script) ---------- */
+let auth = null;   // 관리자 { user, pass }
+async function api(action, payload, useAuth){
+  const body = Object.assign({ action }, useAuth && auth ? auth : {}, payload || {});
+  if (DEMO) return demoApi(body);
+  if (!API_URL) throw { code: 'no_server' };
+  let res;
+  try { res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(body) }); }
+  catch(e) { throw { code: 'network' }; }
+  let j; try { j = await res.json(); } catch(e) { throw { code: 'server_error' }; }
+  if (!j.ok) throw { code: j.error || 'server_error', message: j.message };
+  return j.data;
+}
+const adminApi = (action, payload) => api(action, payload, true).catch(e => {
+  if (e && e.code === 'bad_login' && action !== 'login') logout('다시 로그인하세요');
+  throw e;
+});
+function errText(e){
+  switch (e && e.code) {
+    case 'network': return '인터넷 연결을 확인하고 다시 시도하세요';
+    case 'bad_login': return '아이디 또는 비밀번호가 맞지 않습니다';
+    case 'locked': return '비밀번호를 여러 번 틀렸습니다. 5분 뒤에 다시 시도하세요';
+    case 'forbidden': return '다른 휴대폰에서 낸 실적은 관리자만 지울 수 있어요';
+    case 'bad_request': return '입력 내용을 다시 확인하세요';
+    case 'no_server': return '아직 서버에 연결되지 않았습니다';
+    default: return '처리하지 못했습니다. 잠시 후 다시 시도하세요';
+  }
+}
+
+/* ---------- 연습 모드 (내 컴퓨터에서 열었을 때만) ---------- */
+// 관리자 비밀번호 원문 대신 SHA-256 값만 둡니다. 실제 확인은 구글 시트 '관리자' 탭에서 합니다.
+const DEMO_ADMIN = { id: 'administrator', hash: '13a5c202e320d0bf9bb2c6e2c7cf380a6f7de5d392509fee260b809c893ff2f9', name: '관리자' };
+async function sha256(s){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function demoGet(k, fb){ try { const v = JSON.parse(local.get(k) || 'null'); return v == null ? fb : v; } catch(e){ return fb; } }
+function demoSeed(){
+  const d = today();
+  const mk = (id, worker, process, part, qty, ng, hours, note, t) => ({ id, date: d, shift: '주간', worker, process, part, qty, ng, hours, note, createdAt: d + ' ' + t, key: 'seed', example: true });
+  return [
+    mk('ex1', '예시-김작업', '절단·압착', '91210-AB010', 3200, 6, 8, '', '17:10'),
+    mk('ex2', '예시-이조립', '서브조립', '91210-AB010', 420, 2, 4, '오전 자재 대기 30분', '17:12'),
+    mk('ex2', '예시-이조립', '조립', '91850-CD200', 180, 1, 4, '오전 자재 대기 30분', '17:12'),
+    mk('ex3', '예시-박검사', '통전검사', '91210-AB010', 610, 4, 8, '', '17:15'),
+    mk('ex4', '예시-최압착', '절단·압착', '91850-CD200', 2750, 11, 8, '3호기 압착고 조정', '17:20')
+  ];
+}
+async function demoApi(p){
+  let rows = demoGet('demo-rows', null); if (!rows) { rows = demoSeed(); local.set('demo-rows', JSON.stringify(rows)); }
+  const save = r => local.set('demo-rows', JSON.stringify(r));
+  const conf = demoGet('demo-cfg', { processes: DEFAULT_PROCS, workers: ['예시-김작업', '예시-이조립', '예시-박검사', '예시-최압착', '예시-정포장'] });
+  const pub = r => { const o = Object.assign({}, r); delete o.key; return o; };
+  const needAdmin = async () => {
+    if (String(p.user || '').trim().toLowerCase() !== DEMO_ADMIN.id || await sha256(String(p.pass || '')) !== DEMO_ADMIN.hash) throw { code: 'bad_login' };
+  };
+  switch (p.action) {
+    case 'config': return { processes: conf.processes };
+    case 'submit': {
+      const id = rid(), r = p.report;
+      for (const l of r.lines) rows.push({ id, date: r.date, shift: r.shift, worker: r.worker, process: l.process, part: l.part, qty: l.qty, ng: l.ng, hours: l.hours, note: r.note, createdAt: nowText(), key: p.key });
+      save(rows); return { id };
+    }
+    case 'mine': return rows.filter(r => r.date === p.date && r.key === p.key).map(pub);
+    case 'removeMine': {
+      const hit = rows.filter(r => r.id === p.id);
+      if (hit.length && hit[0].key !== p.key) throw { code: 'forbidden' };
+      save(rows.filter(r => r.id !== p.id)); return { deleted: hit.length };
+    }
+    case 'login': await needAdmin(); return { name: DEMO_ADMIN.name, processes: conf.processes, workers: conf.workers };
+    case 'list': await needAdmin(); return rows.filter(r => r.date >= p.from && r.date <= p.to).map(pub);
+    case 'remove': await needAdmin(); save(rows.filter(r => r.id !== p.id)); return { deleted: 1 };
+    case 'saveConfig': await needAdmin(); local.set('demo-cfg', JSON.stringify({ processes: p.processes, workers: p.workers })); return true;
+  }
+  throw { code: 'server_error' };
+}
+
+/* ---------- 상태 ---------- */
+let cfg = { processes: DEFAULT_PROCS.slice(), workers: [] };
+let admin = null;   // 로그인한 관리자 { name }
+let rows = [];
+let lineSeq = 0, pollT = null;
+
+$('#siteName').textContent = SITE_NAME;
+$('#demoNotice').hidden = !DEMO;
+$('#noServer').hidden = DEMO || !!API_URL;
+$('#demoPanel').hidden = !DEMO;
+
+/* ---------- 화면 전환: 작업자 / 로그인 / 관리자 ---------- */
+function show(view){
+  const isAdmin = view === 'status' || view === 'settings';
+  document.body.classList.toggle('is-admin', isAdmin);
+  $('#modeLabel').textContent = isAdmin ? '관리자 모드' : (view === 'login' ? '관리자 로그인' : '작업자 모드');
+  $('#workerView').hidden = view !== 'worker';
+  $('#loginView').hidden = view !== 'login';
+  $('#statusView').hidden = view !== 'status';
+  $('#settingsView').hidden = view !== 'settings';
+  $('#adminTabs').hidden = !isAdmin;
+  $('#toAdmin').hidden = view !== 'worker';
+  $('#logout').hidden = !isAdmin;
+  $('#who').hidden = !isAdmin;
+  $('#who').textContent = admin ? admin.name + ' 님' : '';
+  for (const b of document.querySelectorAll('.tab')) b.setAttribute('aria-selected', String(b.dataset.tab === view));
+  document.querySelector('meta[name=theme-color]').content = isAdmin ? '#1c2533' : '#1d5fa8';
+  try { history.replaceState(null, '', view === 'worker' ? location.pathname : '#' + (isAdmin ? view : 'admin')); } catch(e){}
+  clearInterval(pollT);
+  if (view === 'status') { loadAdmin(); pollT = setInterval(() => { if (!document.hidden) loadAdmin(true); }, 60000); }
+  if (view === 'login') setTimeout(() => $($('#lg-id').value ? '#lg-pw' : '#lg-id').focus(), 0);
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
+$('#toAdmin').addEventListener('click', () => admin ? show('status') : show('login'));
+$('#backToWorker').addEventListener('click', () => show('worker'));
+
+/* ---------- 관리자 로그인 / 로그아웃 ---------- */
+function loadAuth(){
+  for (const s of [sess, local]) { try { const a = JSON.parse(s.get('adminAuth') || 'null'); if (a && a.user) return a; } catch(e){} }
+  return null;
+}
+function saveAuth(a, keep){ sess.del('adminAuth'); local.del('adminAuth'); (keep ? local : sess).set('adminAuth', JSON.stringify(a)); }
+function logout(msg){
+  sess.del('adminAuth'); local.del('adminAuth');
+  auth = null; admin = null; rows = [];
+  $('#lg-pw').value = '';
+  const e = $('#lg-err'); e.hidden = !msg; e.textContent = msg || '';
+  show(msg ? 'login' : 'worker');
+}
+$('#logout').addEventListener('click', () => logout());
+
+function applyAdminConfig(r){
+  if (r.processes && r.processes.length) cfg.processes = r.processes.slice();
+  cfg.workers = (r.workers || []).slice();
+  refreshLists();
+  $('#s-procs').value = cfg.processes.join('\n');
+  $('#s-workers').value = cfg.workers.join('\n');
+}
+
+$('#loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const user = $('#lg-id').value.trim(), pass = $('#lg-pw').value;
+  const err = $('#lg-err');
+  if (!user || !pass) { err.hidden = false; err.textContent = '아이디와 비밀번호를 입력하세요'; return; }
+  const b = $('#lg-btn'); b.disabled = true; b.textContent = '확인하는 중…'; err.hidden = true;
+  auth = { user, pass };
+  try {
+    const r = await adminApi('login');
+    admin = { name: r.name };
+    applyAdminConfig(r);
+    saveAuth(auth, $('#lg-keep').checked);
+    $('#lg-pw').value = '';
+    show('status');
+  } catch(ex) {
+    auth = null;
+    err.hidden = false; err.textContent = errText(ex);
+  } finally { b.disabled = false; b.textContent = '로그인'; }
+});
+
+/* ---------- 작업자: 실적 입력 ---------- */
+function procOptions(sel){
+  const list = cfg.processes.slice();
+  if (sel && !list.includes(sel)) list.push(sel);
+  return '<option value="">공정 선택</option>' + list.map(p => `<option${p === sel ? ' selected' : ''}>${esc(p)}</option>`).join('');
+}
+function renumber(){
+  const items = [...$('#lines').children];
+  items.forEach((el, i) => {
+    el.querySelector('.line-no').textContent = '작업 ' + (i + 1);
+    el.querySelector('.rm').hidden = items.length === 1;
+  });
+}
+function addLine(){
+  const id = ++lineSeq;
+  const el = document.createElement('div');
+  el.className = 'line'; el.dataset.id = id;
+  const last = [...$('#lines').children].pop();
+  const prevProc = last ? $('#l' + last.dataset.id + '-process').value : (local.get('lastProc') || '');
+  el.innerHTML = `
+    <div class="line-head"><span class="line-no"></span><button type="button" class="linkish rm">이 작업 빼기</button></div>
+    <label class="fld"><span>공정</span><select id="l${id}-process">${procOptions(prevProc)}</select></label>
+    <label class="fld"><span>품번 / 차종</span><input id="l${id}-part" autocomplete="off" placeholder="예: 91210-AB010"></label>
+    <div class="row3">
+      <label class="fld"><span>생산수량</span><input id="l${id}-qty" type="number" inputmode="numeric" min="0" placeholder="0"></label>
+      <label class="fld"><span>불량</span><input id="l${id}-ng" type="number" inputmode="numeric" min="0" placeholder="0"></label>
+      <label class="fld"><span>작업시간(h)</span><input id="l${id}-hours" type="number" inputmode="decimal" min="0" step="0.5" placeholder="8"></label>
+    </div>`;
+  el.querySelector('.rm').addEventListener('click', () => { el.remove(); renumber(); });
+  $('#lines').appendChild(el);
+  renumber();
+}
+function refreshLists(){
+  document.querySelectorAll('#lines select').forEach(s => { const v = s.value; s.innerHTML = procOptions(v); });
+  const ap = $('#a-proc'), av = ap.value;
+  ap.innerHTML = '<option value="">전체 공정</option>' + cfg.processes.map(p => `<option${p === av ? ' selected' : ''}>${esc(p)}</option>`).join('');
+}
+
+$('#f-date').value = today();
+$('#f-worker').value = local.get('workerName') || '';
+addLine();
+$('#addLine').addEventListener('click', addLine);
+
+$('#reportForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const worker = $('#f-worker').value.trim();
+  const date = $('#f-date').value;
+  const shift = document.querySelector('input[name=shift]:checked').value;
+  if (!worker) { toast('작업자 이름을 입력하세요'); $('#f-worker').focus(); return; }
+  if (!date) { toast('작업일자를 선택하세요'); return; }
+  const lines = [];
+  const els = [...$('#lines').children];
+  for (const el of els) {
+    const id = el.dataset.id;
+    const l = {
+      process: $('#l' + id + '-process').value,
+      part: $('#l' + id + '-part').value.trim(),
+      qty: n($('#l' + id + '-qty').value),
+      ng: n($('#l' + id + '-ng').value),
+      hours: n($('#l' + id + '-hours').value)
+    };
+    if (!l.qty && !l.ng) continue;
+    if (!l.process) { toast('작업 ' + (els.indexOf(el) + 1) + '의 공정을 선택하세요'); return; }
+    lines.push(l);
+  }
+  if (!lines.length) { toast('생산수량을 하나 이상 입력하세요'); return; }
+  const btn = $('#submitBtn'); btn.disabled = true; btn.textContent = '제출하는 중…';
+  try {
+    await api('submit', { key: deviceKey, report: { date, shift, worker, lines, note: $('#f-note').value.trim() } });
+    local.set('workerName', worker); local.set('lastProc', lines[lines.length - 1].process);
+    $('#lines').innerHTML = ''; addLine(); $('#f-note').value = '';
+    toast('실적을 제출했습니다');
+    loadMine();
+  } catch (err) {
+    toast(errText(err));
+  } finally { btn.disabled = false; btn.textContent = '실적 제출'; }
+});
+
+async function loadMine(){
+  const date = $('#f-date').value;
+  if (!date || (!DEMO && !API_URL)) { $('#mineWrap').hidden = true; return; }
+  let list;
+  try { list = await api('mine', { date, key: deviceKey }); } catch(e) { $('#mineWrap').hidden = true; return; }
+  const groups = new Map();
+  for (const r of list) { if (!groups.has(r.id)) groups.set(r.id, []); groups.get(r.id).push(r); }
+  const box = $('#mine'); box.innerHTML = '';
+  $('#mineWrap').hidden = groups.size === 0;
+  for (const [id, g] of groups) {
+    const qty = g.reduce((a, r) => a + r.qty, 0);
+    const row = document.createElement('div'); row.className = 'mine-item';
+    row.innerHTML = `<div><div>${esc(g[0].worker)} · ${esc(g[0].shift)} · ${g.map(r => esc(r.process)).join(', ')}</div><div class="sub num">생산 ${fmt(qty)} · ${esc(String(g[0].createdAt).slice(11, 16))} 제출</div></div>`;
+    const del = document.createElement('button'); del.type = 'button'; del.className = 'btn small danger'; del.textContent = '삭제';
+    del.addEventListener('click', async () => {
+      if (del.dataset.arm !== '1') { del.dataset.arm = '1'; del.textContent = '정말 삭제'; return; }
+      try { await api('removeMine', { id, key: deviceKey }); toast('삭제했습니다'); loadMine(); } catch(e) { toast(errText(e)); }
+    });
+    row.appendChild(del); box.appendChild(row);
+  }
+}
+$('#f-date').addEventListener('change', loadMine);
+
+/* ---------- 관리자: 공정별 현황 ---------- */
+$('#a-from').value = today(); $('#a-to').value = today();
+async function loadAdmin(quiet){
+  if (!admin) return;
+  const from = $('#a-from').value || today(), to = $('#a-to').value || from;
+  try {
+    rows = await adminApi('list', { from, to });
+    $('#updated').textContent = nowText().slice(11) + ' 기준';
+    renderAdmin();
+  } catch(err) { if (!quiet) toast(errText(err)); }
+}
+$('#a-from').addEventListener('change', () => loadAdmin());
+$('#a-to').addEventListener('change', () => loadAdmin());
+$('#a-shift').addEventListener('change', renderAdmin);
+$('#a-proc').addEventListener('change', renderAdmin);
+$('#refresh').addEventListener('click', () => loadAdmin());
+
+function flatRows(){
+  const sf = $('#a-shift').value, pf = $('#a-proc').value;
+  return rows.filter(r => (!sf || r.shift === sf) && (!pf || r.process === pf))
+             .slice().sort((a, b) => (a.date + a.worker).localeCompare(b.date + b.worker, 'ko'));
+}
+
+function renderAdmin(){
+  const list = flatRows();
+  const qty = list.reduce((a, r) => a + r.qty, 0), ng = list.reduce((a, r) => a + r.ng, 0), hrs = list.reduce((a, r) => a + r.hours, 0);
+  const people = new Set(list.map(r => r.worker));
+  $('#kpis').innerHTML = `
+    <div class="kpi"><div class="k">총 생산</div><div class="v">${fmt(qty)}</div><div class="s">EA</div></div>
+    <div class="kpi"><div class="k">총 불량</div><div class="v ng">${fmt(ng)}</div><div class="s">불량률 ${pct(ng, qty)}</div></div>
+    <div class="kpi"><div class="k">작업시간 합계</div><div class="v">${hrs.toLocaleString('ko-KR')}</div><div class="s">시간 · UPH ${hrs ? fmt(qty / hrs) : '–'}</div></div>
+    <div class="kpi"><div class="k">제출 인원</div><div class="v">${people.size}</div><div class="s">${cfg.workers.length ? '명단 ' + cfg.workers.length + '명 중' : '명'}</div></div>`;
+
+  const m = $('#missing');
+  if (cfg.workers.length && $('#a-from').value === $('#a-to').value) {
+    const sf = $('#a-shift').value;
+    const submitted = new Set(rows.filter(r => !sf || r.shift === sf).map(r => r.worker));
+    const miss = cfg.workers.filter(w => !submitted.has(w));
+    m.innerHTML = miss.length ? `<div class="missing">미제출 ${miss.length}명: ${miss.map(esc).join(', ')}</div>` : `<div class="missing ok">명단의 모든 작업자가 제출했습니다</div>`;
+  } else m.innerHTML = '';
+
+  const byProc = new Map();
+  for (const r of list) {
+    if (!byProc.has(r.process)) byProc.set(r.process, new Map());
+    const w = byProc.get(r.process);
+    if (!w.has(r.worker)) w.set(r.worker, { qty: 0, ng: 0, hours: 0, parts: new Set(), example: false });
+    const a = w.get(r.worker); a.qty += r.qty; a.ng += r.ng; a.hours += r.hours; if (r.part) a.parts.add(r.part); a.example = a.example || !!r.example;
+  }
+  const order = cfg.processes;
+  const procs = [...byProc.keys()].sort((a, b) => { const ia = order.indexOf(a), ib = order.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
+  const pl = $('#procList');
+  if (!procs.length) {
+    pl.innerHTML = '<div class="empty">이 기간에 입력된 실적이 없습니다</div>';
+  } else {
+    pl.innerHTML = procs.map(p => {
+      const ws = [...byProc.get(p).entries()].sort((a, b) => b[1].qty - a[1].qty);
+      const pq = ws.reduce((s, [, a]) => s + a.qty, 0), pn = ws.reduce((s, [, a]) => s + a.ng, 0), ph = ws.reduce((s, [, a]) => s + a.hours, 0);
+      const max = Math.max(1, ...ws.map(([, a]) => a.qty));
+      return `<article class="proc">
+        <div class="proc-head"><h3>${esc(p)}</h3>
+          <div class="proc-stats"><span>생산 <b>${fmt(pq)}</b></span><span>불량 <b class="ngv">${fmt(pn)}</b></span><span>불량률 <b>${pct(pn, pq)}</b></span><span>UPH <b>${ph ? fmt(pq / ph) : '–'}</b></span><span>인원 <b>${ws.length}</b></span></div>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>작업자</th><th class="barcell"></th><th class="r">생산</th><th class="r">불량</th><th class="r">시간</th><th class="r">UPH</th><th>품번</th></tr></thead>
+          <tbody>${ws.map(([name, a]) => `<tr>
+            <td>${esc(name)}${a.example ? '<span class="pill">예시</span>' : ''}</td>
+            <td class="barcell"><div class="bar"><i style="width:${(a.qty / max * 100).toFixed(1)}%"></i></div></td>
+            <td class="r num">${fmt(a.qty)}</td>
+            <td class="r num ${a.ng ? 'ngtxt' : 'muted'}">${fmt(a.ng)}</td>
+            <td class="r num">${a.hours || '–'}</td>
+            <td class="r num">${a.hours ? fmt(a.qty / a.hours) : '–'}</td>
+            <td class="muted">${[...a.parts].map(esc).join(', ') || '–'}</td></tr>`).join('')}</tbody>
+        </table></div></article>`;
+    }).join('');
+  }
+
+  const t = $('#rawTbl');
+  if (!list.length) { t.innerHTML = '<tbody><tr><td class="muted">표시할 기록이 없습니다</td></tr></tbody>'; return; }
+  t.innerHTML = `<thead><tr><th>날짜</th><th>조</th><th>작업자</th><th>공정</th><th>품번</th><th class="r">생산</th><th class="r">불량</th><th class="r">시간</th><th>특이사항</th><th>제출</th><th></th></tr></thead>
+    <tbody>${list.map(r => `<tr>
+      <td class="num">${esc(r.date.slice(5))}</td><td>${esc(r.shift)}</td><td>${esc(r.worker)}${r.example ? '<span class="pill">예시</span>' : ''}</td>
+      <td>${esc(r.process)}</td><td class="muted">${esc(r.part) || '–'}</td>
+      <td class="r num">${fmt(r.qty)}</td><td class="r num ${r.ng ? 'ngtxt' : 'muted'}">${fmt(r.ng)}</td><td class="r num">${r.hours || '–'}</td>
+      <td class="muted">${esc(r.note)}</td><td class="num muted">${esc(String(r.createdAt).slice(11, 16))}</td>
+      <td><button type="button" class="btn small danger" data-del="${esc(r.id)}">삭제</button></td></tr>`).join('')}</tbody>`;
+}
+
+$('#rawTbl').addEventListener('click', async e => {
+  const b = e.target.closest('[data-del]'); if (!b) return;
+  if (b.dataset.arm !== '1') { b.dataset.arm = '1'; b.textContent = '정말 삭제'; return; }
+  try { await adminApi('remove', { id: b.dataset.del }); toast('실적 한 건을 삭제했습니다'); loadAdmin(); } catch(err) { toast(errText(err)); }
+});
+
+const HEAD = ['날짜','근무조','작업자','공정','품번','생산수량','불량수량','작업시간','특이사항','제출시각'];
+const rowVals = r => [r.date, r.shift, r.worker, r.process, r.part, r.qty, r.ng, r.hours, r.note, r.createdAt];
+$('#copyTsv').addEventListener('click', async () => {
+  const list = flatRows(); if (!list.length) { toast('복사할 기록이 없습니다'); return; }
+  const tsv = [HEAD, ...list.map(rowVals)].map(a => a.map(v => String(v ?? '').replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
+  try { await navigator.clipboard.writeText(tsv); toast(list.length + '줄을 복사했습니다. 엑셀에 붙여넣으세요'); }
+  catch(e) {
+    const ta = document.createElement('textarea'); ta.value = tsv; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch(_){}
+    ta.remove(); toast(ok ? '복사했습니다. 엑셀에 붙여넣으세요' : '복사하지 못했습니다. CSV 저장을 이용하세요');
+  }
+});
+$('#saveCsv').addEventListener('click', () => {
+  const list = flatRows(); if (!list.length) { toast('저장할 기록이 없습니다'); return; }
+  const q = v => { const s = String(v ?? ''); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const csv = '﻿' + [HEAD, ...list.map(rowVals)].map(a => a.map(q).join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a'); a.href = url; a.download = `작업일보_${$('#a-from').value}_${$('#a-to').value}.csv`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+/* ---------- 관리자: 설정 ---------- */
+const toList = s => [...new Set(s.split('\n').map(x => x.trim()).filter(Boolean))];
+$('#saveCfg').addEventListener('click', async () => {
+  const processes = toList($('#s-procs').value), workers = toList($('#s-workers').value);
+  if (!processes.length) { toast('공정을 하나 이상 입력하세요'); return; }
+  try { await adminApi('saveConfig', { processes, workers }); cfg = { processes, workers }; refreshLists(); renderAdmin(); toast('설정을 저장했습니다'); }
+  catch(e) { toast(errText(e)); }
+});
+$('#clearDemo').addEventListener('click', () => {
+  const b = $('#clearDemo');
+  if (b.dataset.arm !== '1') { b.dataset.arm = '1'; b.textContent = '한 번 더 누르면 지웁니다'; return; }
+  b.dataset.arm = ''; b.textContent = '연습 데이터 지우기';
+  local.set('demo-rows', '[]'); rows = []; renderAdmin(); loadMine(); toast('연습 데이터를 지웠습니다');
+});
+
+/* ---------- 시작 ---------- */
+show('worker');
+if (DEMO || API_URL) {
+  api('config').then(c => { if (c && c.processes && c.processes.length) { cfg.processes = c.processes.slice(); refreshLists(); } }).catch(() => {});
+  loadMine();
+}
+// 관리자 로그인이 유지되어 있고 주소가 #status·#settings·#admin이면 관리자 화면으로
+const saved = loadAuth();
+const wantAdmin = ['#status', '#settings', '#admin'].includes(location.hash);
+if (saved && (DEMO || API_URL)) {
+  auth = saved;
+  adminApi('login').then(r => {
+    admin = { name: r.name }; applyAdminConfig(r);
+    if (wantAdmin) show(location.hash === '#settings' ? 'settings' : 'status');
+  }).catch(() => { auth = null; });
+} else if (wantAdmin) show('login');
+})();
+</script>
+</body>
+</html>
