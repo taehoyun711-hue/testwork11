@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#1d5fa8">
+<meta name="theme-color" content="#f4efe7">
 <meta name="robots" content="noindex, nofollow">
 <title>작업일보</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <script>
 /* ============================================================
    설정
@@ -22,142 +21,201 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxmA-U9SyPGKT3elVgmHysK
 const SITE_NAME = "생산 현장";
 </script>
 <style>
+/* 깔끔한 앱: 옅은 회색 바탕, 흰 카드, 큰 글씨, 아래 고정 버튼 */
 :root{
   color-scheme:light;
-  --ground:#eef0ec;--surface:#ffffff;--surface-2:#f6f7f4;
-  --ink:#1b2129;--ink-2:#4a5360;--ink-3:#7a8390;--line:#d9ddd6;
-  --accent:#1d5fa8;--accent-ink:#ffffff;--accent-soft:#e3ecf7;
-  --ng:#b3471b;--ng-soft:#fbe9e0;--ok:#2f7a4a;--ok-soft:#e2f2e7;--warn:#8a6100;--warn-soft:#fbf1d6;--bar:#c9d6e6;
-  --band:#1d5fa8;--band-ink:#ffffff;--band-sub:#cfe0f5;--badge:#f2c14e;--badge-ink:#1c2533;
-  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
-  --r:10px;
+  --bg:#efe6d8;--card:#fffcf7;--fill:#f4ede3;--fill-2:#e9dfd1;
+  --glow-1:#faf5ec;--glow-2:#e3d3bb;--grain:.32;
+  --ink:#2b2620;--ink-2:#5e554a;--ink-3:#9c9184;--line:#efe8dd;
+  --accent:#7a5230;--accent-ink:#fffaf3;--accent-soft:#f3e7d8;--accent-press:#654225;
+  --ng:#c8412f;--ng-soft:#f9e6e0;--ok:#4f7d3a;--ok-soft:#e8f0df;--warn:#a26a00;--warn-soft:#f8ecd2;--bar:#ecdfcd;
+  --bar-bg:rgba(239,230,216,.82);--bar-ink:#2b2620;--bar-sub:#9c9184;--chip:#e9dfd1;--chip-ink:#5e554a;
+  --badge:#ffd23f;--badge-ink:#191f28;
+  --sans:"Pretendard Variable","Pretendard",-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  --r:20px;--r-s:12px;
+  --shadow:0 1px 2px rgba(74,52,28,.06),0 4px 14px -8px rgba(74,52,28,.10);
 }
-body.is-admin{--band:#1c2533;--band-sub:#aab4c3}
+body.is-admin{--bar-bg:#2b2620;--bar-ink:#fffaf3;--bar-sub:#b7ab9c}
 @media (prefers-color-scheme: dark){
   :root{
     color-scheme:dark;
-    --ground:#12161b;--surface:#1b2027;--surface-2:#222831;--ink:#e7eaee;--ink-2:#b3bac4;--ink-3:#838c98;
-    --line:#2f3640;--accent:#6aa5e8;--accent-ink:#0d1620;--accent-soft:#1c2c40;--ng:#f08a5d;--ng-soft:#3a2219;
-    --ok:#6cc48d;--ok-soft:#1a3024;--warn:#e7bd55;--warn-soft:#342a12;--bar:#2e4a6b;
-    --band:#1f4f86;--band-sub:#bcd6f3;
+    --bg:#17140f;--card:#221e18;--fill:#2d2820;--fill-2:#39322a;
+    --glow-1:#241e16;--glow-2:#110e0a;--grain:.18;
+    --ink:#f3ede4;--ink-2:#cdc3b6;--ink-3:#978c7e;--line:#322c24;
+    --accent:#d9ab7a;--accent-ink:#221a11;--accent-soft:#3a2e21;--accent-press:#c79764;
+    --ng:#f08a74;--ng-soft:#3b221c;--ok:#9cc783;--ok-soft:#24301c;--warn:#e4b653;--warn-soft:#352b14;--bar:#40352a;
+    --bar-bg:rgba(23,20,15,.82);--bar-ink:#f3ede4;--bar-sub:#978c7e;--chip:#2d2820;--chip-ink:#cdc3b6;
+    --shadow:none;
   }
-  body.is-admin{--band:#05080c;--band-sub:#8d97a5}
+  body.is-admin{--bar-bg:#0b0907;--bar-ink:#f3ede4;--bar-sub:#978c7e}
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;padding-bottom:env(safe-area-inset-bottom,0px)}
-.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;letter-spacing:-.01em;padding-bottom:env(safe-area-inset-bottom,0px);
+  background:
+    radial-gradient(1100px 620px at 108% -12%, var(--glow-1) 0%, transparent 62%),
+    radial-gradient(900px 560px at -18% 108%, var(--glow-2) 0%, transparent 58%),
+    var(--bg);
+  background-attachment:fixed}
+/* 종이 같은 미세한 결 */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:var(--grain);mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .36 0 0 0 0 .25 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.top,.wrap,.toast{position:relative;z-index:1}
+.top{position:sticky}
+.toast{position:fixed}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:0 40px}
+body.is-admin .wrap{max-width:1000px}
 [hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* ---------- 상단 띠: 모드 표시 ---------- */
+/* ---------- 상단 바 ---------- */
 .top{position:sticky;top:0;z-index:5}
-.band{background:var(--band);color:var(--band-ink);padding-top:env(safe-area-inset-top,0px)}
-.band-in{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.band{background:var(--bar-bg);color:var(--bar-ink);padding-top:env(safe-area-inset-top,0px);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px)}
+.band-in{max-width:1000px;margin:0 auto;padding-inline:16px;padding-block:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px}
 .band-l{display:flex;flex-direction:column;min-width:0}
-.band .site{font-size:12px;color:var(--band-sub);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .band-title{display:flex;align-items:center;gap:8px}
-.band h1{margin:0;font-size:19px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
-.mode{font-size:12px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:4px;white-space:nowrap;background:rgba(255,255,255,.18);color:var(--band-ink)}
-body.is-admin .mode{background:var(--badge);color:var(--badge-ink)}
-.band-r{display:flex;align-items:center;gap:10px;font-size:14px;min-width:0}
-.who{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--band-sub)}
-.band-btn{appearance:none;font:inherit;font-size:13px;font-weight:600;color:var(--band-ink);background:transparent;border:1px solid rgba(255,255,255,.45);border-radius:6px;padding:6px 12px;min-height:36px;cursor:pointer;white-space:nowrap}
-.tabs{background:var(--ground);border-bottom:1px solid var(--line)}
-.tabs-in{max-width:980px;margin:0 auto;padding-inline:16px;display:flex;gap:4px;overflow-x:auto}
-.tab{appearance:none;border:0;background:none;font:inherit;font-weight:600;color:var(--ink-3);padding:10px 14px;border-bottom:3px solid transparent;cursor:pointer;font-size:15px;white-space:nowrap}
-.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
-.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.band-btn:focus-visible{outline:2px solid var(--band-ink)}
+.band h1{margin:0;font-size:18px;font-weight:700;white-space:nowrap}
+.mode{font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap;background:var(--chip);color:var(--chip-ink)}
+body.is-admin .mode{background:var(--badge);color:var(--badge-ink);font-weight:700}
+.band-r{display:flex;align-items:center;gap:8px;font-size:14px;min-width:0}
+.who{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--bar-sub)}
+.band-btn{appearance:none;font:inherit;font-size:14px;font-weight:600;color:var(--bar-ink);background:transparent;border:0;border-radius:10px;padding:8px 10px;min-height:40px;cursor:pointer;white-space:nowrap}
+.band-btn:hover{background:color-mix(in srgb,var(--bar-ink) 8%,transparent)}
+.tabs{background:var(--bar-bg);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px)}
+.tabs-in{max-width:1000px;margin:0 auto;padding-inline:12px;padding-block:0 10px;display:flex;gap:6px;overflow-x:auto}
+.tab{appearance:none;border:0;font:inherit;font-weight:600;font-size:15px;color:var(--bar-sub);background:transparent;padding:8px 14px;border-radius:99px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--bar-bg);background:var(--bar-ink)}
 
-.notice{margin:16px 0 0;padding:12px 14px;border-radius:var(--r);background:var(--warn-soft);color:var(--warn);font-size:14px}
+.notice{margin:16px 0 0;padding:14px 16px;border-radius:var(--r-s);background:var(--warn-soft);color:var(--warn);font-size:14px;font-weight:500}
 
-/* ---------- 폼 ---------- */
-.sheet{margin-top:16px;display:flex;flex-direction:column;gap:14px}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
-.panel-title{margin:0;font-size:13px;font-weight:600;color:var(--ink-3);letter-spacing:.04em}
-.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
-.fld>span{font-size:13px;font-weight:600;color:var(--ink-2)}
-input,select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:48px;width:100%;min-width:0}
-textarea{min-height:72px;resize:vertical}
-input[type=number]{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;min-height:48px}
-.seg label{flex:1;display:flex;position:relative}
+/* ---------- 작업자 화면 ---------- */
+.hello{padding-block:28px 18px}
+.hello h2{margin:0;font-size:26px;line-height:1.35;font-weight:700;letter-spacing:-.02em}
+.hello p{margin:8px 0 0;color:var(--ink-3);font-size:15px}
+.stack{display:flex;flex-direction:column;gap:12px}
+
+.card{background:var(--card);border-radius:var(--r);padding:6px 20px;box-shadow:var(--shadow)}
+.card-h{display:flex;justify-content:space-between;align-items:center;padding-block:14px 4px}
+.card-h h3{margin:0;font-size:17px;font-weight:700}
+.row{display:flex;align-items:center;gap:12px;min-height:60px;border-bottom:1px solid var(--line);cursor:text}
+.row:last-child{border-bottom:0}
+.row .k{flex:none;width:76px;font-size:15px;color:var(--ink-2)}
+.row input,.row select{flex:1;min-width:0;font:inherit;font-size:17px;font-weight:600;color:var(--ink);background:transparent;border:0;padding:12px 0;text-align:right;min-height:48px;border-radius:0}
+.row input::placeholder,.row textarea::placeholder{color:var(--ink-3);font-weight:400;opacity:.8}
+.row input:focus-visible,.row select:focus-visible,.row textarea:focus-visible{outline:0}
+.row:focus-within{border-bottom-color:var(--accent)}
+.row input[type=number]{font-variant-numeric:tabular-nums}
+.row input[type=date]{text-align:right}
+.row input[type=date]::-webkit-date-and-time-value{text-align:right}
+.row select{appearance:none;-webkit-appearance:none;cursor:pointer;text-align:right;text-align-last:right;padding-right:20px;background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);background-position:calc(100% - 9px) 50%,calc(100% - 4px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.row select:invalid,.row select.empty{color:var(--ink-3);font-weight:400}
+.row .u{flex:none;color:var(--ink-3);font-size:15px;margin-left:-4px}
+.row.col{flex-direction:column;align-items:stretch;gap:6px;padding-block:14px}
+.row.col .k{width:auto}
+.row textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--fill);border:0;border-radius:var(--r-s);padding:12px 14px;min-height:84px;resize:vertical;width:100%}
+.row textarea:focus-visible{outline:2px solid var(--accent);outline-offset:0}
+
+.seg{margin-left:auto;display:inline-flex;background:var(--fill);border-radius:12px;padding:3px}
+.seg label{display:flex;position:relative}
 .seg input{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;min-height:0}
-.seg span{flex:1;display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--ink-2);background:var(--surface-2);cursor:pointer}
-.seg input:checked+span{background:var(--accent);color:var(--accent-ink)}
-.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:-3px}
+.seg span{display:flex;align-items:center;justify-content:center;min-width:64px;min-height:40px;padding:0 14px;border-radius:9px;font-size:15px;font-weight:600;color:var(--ink-3);cursor:pointer}
+.seg input:checked+span{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.seg input:focus-visible+span{outline:2px solid var(--accent)}
 
-.line{border-top:1px dashed var(--line);padding-top:12px;display:flex;flex-direction:column;gap:10px}
-.line:first-child{border-top:0;padding-top:0}
-.line-head{display:flex;justify-content:space-between;align-items:center}
-.line-no{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
-.btn{appearance:none;font:inherit;font-weight:600;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 16px;min-height:44px;cursor:pointer}
-.btn:disabled{opacity:.5;cursor:default}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);min-height:54px;font-size:17px}
-.btn.ghost{border-style:dashed;color:var(--accent)}
-.btn.small{min-height:34px;padding:4px 10px;font-size:13px}
-.btn.danger{color:var(--ng);border-color:var(--ng)}
-.linkish{appearance:none;background:none;border:0;font:inherit;font-size:13px;color:var(--ink-3);cursor:pointer;padding:6px;text-decoration:underline;text-underline-offset:3px}
+.lines{display:flex;flex-direction:column;gap:12px}
+.line-no{font-size:17px;font-weight:700}
+.add-btn{appearance:none;font:inherit;font-size:16px;font-weight:600;color:var(--accent);background:var(--card);border:0;border-radius:var(--r);min-height:56px;cursor:pointer;box-shadow:var(--shadow)}
+.add-btn:active{background:var(--accent-soft)}
 
-.mine{display:flex;flex-direction:column;gap:8px}
-.mine-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:var(--surface-2);border-radius:8px;font-size:14px}
-.mine-item .sub{color:var(--ink-3);font-size:13px}
+.submit-bar{position:sticky;bottom:0;margin-inline:-16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:4}
+
+.btn{appearance:none;font:inherit;font-weight:600;border-radius:var(--r-s);border:0;background:var(--fill);color:var(--ink);padding:10px 16px;min-height:44px;cursor:pointer}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.primary{width:100%;background:var(--accent);color:var(--accent-ink);min-height:58px;font-size:18px;font-weight:700;border-radius:16px}
+.btn.primary:active:not(:disabled){background:var(--accent-press);transform:scale(.99)}
+.btn.small{min-height:36px;padding:6px 12px;font-size:14px;border-radius:10px}
+.btn.danger{color:var(--ng);background:var(--ng-soft)}
+.linkish{appearance:none;background:none;border:0;font:inherit;font-size:14px;color:var(--ink-3);cursor:pointer;padding:8px 4px}
+
+.mine-card{margin-top:20px}
+.mine{display:flex;flex-direction:column}
+.mine-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-block:14px;border-bottom:1px solid var(--line);font-size:15px}
+.mine-item:last-child{border-bottom:0}
+.mine-item .sub{color:var(--ink-3);font-size:14px;margin-top:2px}
+
+.done{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:var(--r-s);background:var(--ok-soft);color:var(--ok);font-weight:600;font-size:15px}
+.done::before{content:"";flex:none;width:22px;height:22px;border-radius:50%;background:var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/14px no-repeat}
 
 /* ---------- 관리자 로그인 ---------- */
-.login{display:flex;justify-content:center;padding-block:32px}
-.login-card{width:100%;max-width:380px;display:flex;flex-direction:column;gap:14px}
-.login-card h2{margin:0;font-size:22px;letter-spacing:-.01em}
-.err{margin:0;padding:10px 12px;border-radius:8px;background:var(--ng-soft);color:var(--ng);font-size:14px}
-.check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-2);cursor:pointer;min-height:40px}
+.login{display:flex;justify-content:center;padding-block:28px}
+.login-card{width:100%;max-width:420px;padding:24px 20px 16px;display:flex;flex-direction:column}
+.login-card h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-.02em}
+.login-card .sub{margin:6px 0 10px;color:var(--ink-3);font-size:15px}
+.login-card .row .k{width:84px}
+.login-card .btn.primary{margin-top:14px}
+.login-card .linkish{align-self:center;margin-top:6px}
+.err{margin:10px 0 0;padding:12px 14px;border-radius:var(--r-s);background:var(--ng-soft);color:var(--ng);font-size:14px;font-weight:500}
+.check{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink-2);cursor:pointer;min-height:48px;margin-top:6px}
 .check input{width:22px;height:22px;min-height:0;margin:0;accent-color:var(--accent)}
 
-/* ---------- 관리자 현황 ---------- */
+/* ---------- 관리자 현황·설정 ---------- */
+.sheet{margin-top:16px;display:flex;flex-direction:column;gap:12px}
+.panel{background:var(--card);border-radius:var(--r);padding:18px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.panel-title{margin:0;font-size:17px;font-weight:700}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld>span{font-size:13px;font-weight:600;color:var(--ink-3)}
+.fld input,.fld select,.fld textarea{font:inherit;font-size:16px;font-weight:500;color:var(--ink);background:var(--card);border:0;border-radius:var(--r-s);padding:10px 14px;min-height:48px;width:100%;min-width:0;box-shadow:var(--shadow)}
+.panel .fld input,.panel .fld select,.panel .fld textarea{background:var(--fill);box-shadow:none}
+.fld textarea{min-height:84px;resize:vertical}
 .filters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.kpi{background:var(--surface);padding:12px 14px}
-.kpi .k{font-size:12px;color:var(--ink-3);font-weight:600;letter-spacing:.03em}
-.kpi .v{font-family:var(--mono);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:var(--card);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow)}
+.kpi .k{font-size:14px;color:var(--ink-3);font-weight:500}
+.kpi .v{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.3;margin-top:2px}
 .kpi .v.ng{color:var(--ng)}
-.kpi .s{font-size:12px;color:var(--ink-3)}
-.missing{padding:10px 14px;border-radius:var(--r);background:var(--warn-soft);color:var(--warn);font-size:14px}
+.kpi .s{font-size:13px;color:var(--ink-3)}
+.missing{padding:14px 16px;border-radius:var(--r-s);background:var(--warn-soft);color:var(--warn);font-size:15px;font-weight:500}
 .missing.ok{background:var(--ok-soft);color:var(--ok)}
-.proc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.proc-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px;padding:12px 16px;background:var(--surface-2);border-bottom:1px solid var(--line)}
-.proc-head h3{margin:0;font-size:16px}
-.proc-stats{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--ink-2)}
-.proc-stats b{font-family:var(--mono);color:var(--ink);font-weight:600}
+.proc{background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.proc-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px;padding:18px 20px 10px}
+.proc-head h3{margin:0;font-size:18px;font-weight:700}
+.proc-stats{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;color:var(--ink-3)}
+.proc-stats b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
 .proc-stats .ngv{color:var(--ng)}
 .tbl-wrap{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
-th{font-size:12px;color:var(--ink-3);font-weight:600;letter-spacing:.03em}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:12px 20px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:13px;color:var(--ink-3);font-weight:500;padding-block:8px}
+td{font-variant-numeric:tabular-nums}
 td.r,th.r{text-align:right}
 tr:last-child td{border-bottom:0}
 .barcell{min-width:90px;width:30%}
-.bar{height:8px;border-radius:4px;background:var(--bar);position:relative}
-.bar i{position:absolute;inset:0 auto 0 0;border-radius:4px;background:var(--accent)}
-.pill{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:99px;margin-left:6px;vertical-align:1px;background:var(--warn-soft);color:var(--warn)}
+.bar{height:8px;border-radius:99px;background:var(--bar);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--accent)}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:1px;background:var(--warn-soft);color:var(--warn)}
 .ngtxt{color:var(--ng)}
 .muted{color:var(--ink-3)}
-.empty{padding:28px 16px;text-align:center;color:var(--ink-3);background:var(--surface);border:1px dashed var(--line);border-radius:var(--r)}
+.empty{padding:36px 16px;text-align:center;color:var(--ink-3);background:var(--card);border-radius:var(--r)}
 .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.section-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-top:6px}
-.section-h h2{margin:0;font-size:16px}
-.hint{font-size:13px;color:var(--ink-3);margin:0}
+.section-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-top:10px}
+.section-h h2{margin:0;font-size:19px;font-weight:700}
+.hint{font-size:14px;color:var(--ink-3);margin:0}
 
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:12px 18px;border-radius:10px;font-weight:600;font-size:15px;max-width:calc(100% - 32px);z-index:20}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:rgba(43,38,32,.94);color:#fffaf3;padding:13px 20px;border-radius:14px;font-weight:600;font-size:15px;max-width:calc(100% - 32px);z-index:20;text-align:center}
 
 @media (max-width:640px){
   .filters{grid-template-columns:1fr 1fr}
   .kpis{grid-template-columns:1fr 1fr}
-  .kpi .v{font-size:20px}
+  .kpi .v{font-size:23px}
   .who{display:none}
+  th,td{padding-inline:14px}
 }
-@media (prefers-reduced-motion:no-preference){.btn,.tab,.seg span{transition:background-color .15s,color .15s,border-color .15s}}
+@media (prefers-reduced-motion:no-preference){
+  .btn,.tab,.seg span,.add-btn{transition:background-color .15s,color .15s,transform .1s}
+  .line{animation:rise .22s ease-out}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
 </style>
 </head>
 <body>
@@ -166,7 +224,6 @@ tr:last-child td{border-bottom:0}
   <div class="band">
     <div class="band-in">
       <div class="band-l">
-        <span class="site" id="siteName"></span>
         <div class="band-title"><h1>작업일보</h1><span class="mode" id="modeLabel">작업자 모드</span></div>
       </div>
       <div class="band-r">
@@ -190,53 +247,53 @@ tr:last-child td{border-bottom:0}
 
   <!-- ============ 작업자: 실적 입력 (로그인 없음) ============ -->
   <section id="workerView">
-    <form id="reportForm" class="sheet" novalidate>
-      <div class="panel">
-        <label class="fld"><span>작업자 이름</span><input id="f-worker" autocomplete="name" placeholder="이름 입력" maxlength="30"></label>
-        <div class="row2">
-          <label class="fld"><span>작업일자</span><input type="date" id="f-date"></label>
-          <div class="fld"><span>근무조</span>
-            <div class="seg" role="radiogroup" aria-label="근무조">
-              <label><input type="radio" name="shift" id="s-day" value="주간" checked><span>주간</span></label>
-              <label><input type="radio" name="shift" id="s-night" value="야간"><span>야간</span></label>
-            </div>
+    <div class="hello">
+      <h2>실적 입력</h2>
+      <p id="helloSub"></p>
+    </div>
+
+    <form id="reportForm" class="stack" novalidate>
+      <div class="card">
+        <label class="row" for="f-worker"><span class="k">이름</span><input id="f-worker" autocomplete="name" placeholder="이름 입력" maxlength="30"></label>
+        <label class="row" for="f-date"><span class="k">날짜</span><input type="date" id="f-date"></label>
+        <div class="row"><span class="k" id="shiftLab">근무</span>
+          <div class="seg" role="radiogroup" aria-labelledby="shiftLab">
+            <label><input type="radio" name="shift" id="s-day" value="주간" checked><span>주간</span></label>
+            <label><input type="radio" name="shift" id="s-night" value="야간"><span>야간</span></label>
           </div>
         </div>
       </div>
 
-      <div class="panel">
-        <p class="panel-title">오늘 한 작업</p>
-        <div id="lines"></div>
-        <button type="button" class="btn ghost" id="addLine">+ 다른 공정·품번 추가</button>
+      <div class="lines" id="lines"></div>
+      <button type="button" class="add-btn" id="addLine">＋ 다른 공정·품번 추가</button>
+
+      <div class="card">
+        <label class="row col" for="f-note"><span class="k">특이사항</span><textarea id="f-note" placeholder="설비 고장, 자재 대기 등 (없으면 비워두세요)"></textarea></label>
       </div>
 
-      <div class="panel">
-        <label class="fld"><span>특이사항 (설비 고장, 자재 대기 등)</span><textarea id="f-note" placeholder="없으면 비워두세요"></textarea></label>
-      </div>
-
-      <button type="submit" class="btn primary" id="submitBtn">실적 제출</button>
+      <div class="done" id="doneMsg" role="status" hidden></div>
+      <div class="submit-bar"><button type="submit" class="btn primary" id="submitBtn">실적 제출</button></div>
     </form>
 
-    <div class="panel" style="margin-top:14px" id="mineWrap" hidden>
-      <p class="panel-title">이 휴대폰에서 제출한 실적 (선택한 날짜)</p>
+    <div class="card mine-card" id="mineWrap" hidden>
+      <div class="card-h"><h3>제출 내역</h3><span class="hint" id="mineDate"></span></div>
       <div class="mine" id="mine"></div>
-      <p class="hint">잘못 적었으면 삭제한 뒤 다시 제출하세요.</p>
+      <p class="hint" style="padding-block:4px 16px">이 휴대폰에서 낸 실적이에요. 잘못 적었으면 삭제하고 다시 제출하세요.</p>
     </div>
   </section>
 
   <!-- ============ 관리자 로그인 ============ -->
   <section id="loginView" hidden>
     <div class="login">
-      <form class="login-card" id="loginForm" novalidate>
+      <form class="card login-card" id="loginForm" novalidate>
         <h2>관리자 로그인</h2>
-        <div class="panel">
-          <label class="fld"><span>아이디</span><input id="lg-id" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
-          <label class="fld"><span>비밀번호</span><input id="lg-pw" type="password" autocomplete="current-password"></label>
-          <label class="check"><input type="checkbox" id="lg-keep"> 이 기기에서 로그인 유지</label>
-          <p class="err" id="lg-err" role="alert" hidden></p>
-          <button type="submit" class="btn primary" id="lg-btn">로그인</button>
-        </div>
-        <button type="button" class="linkish" id="backToWorker">← 실적 입력 화면으로</button>
+        <p class="sub">실적 현황은 관리자만 볼 수 있어요</p>
+        <label class="row" for="lg-id"><span class="k">아이디</span><input id="lg-id" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="아이디"></label>
+        <label class="row" for="lg-pw"><span class="k">비밀번호</span><input id="lg-pw" type="password" autocomplete="current-password" placeholder="비밀번호"></label>
+        <label class="check"><input type="checkbox" id="lg-keep"> 이 기기에서 로그인 유지</label>
+        <p class="err" id="lg-err" role="alert" hidden></p>
+        <button type="submit" class="btn primary" id="lg-btn">로그인</button>
+        <button type="button" class="linkish" id="backToWorker">실적 입력 화면으로 돌아가기</button>
       </form>
     </div>
   </section>
@@ -255,7 +312,7 @@ tr:last-child td{border-bottom:0}
       <div id="missing"></div>
       <div id="procList" class="sheet" style="margin-top:0"></div>
 
-      <div class="section-h"><h2>입력된 실적 전체</h2>
+      <div class="section-h"><h2>실적 이력</h2>
         <div class="actions">
           <button type="button" class="btn small" id="copyTsv">엑셀에 붙여넣기용 복사</button>
           <button type="button" class="btn small" id="saveCsv">CSV 파일 저장</button>
@@ -398,7 +455,7 @@ let admin = null;   // 로그인한 관리자 { name }
 let rows = [];
 let lineSeq = 0, pollT = null;
 
-$('#siteName').textContent = SITE_NAME;
+(() => { const d = new Date(); $('#helloSub').textContent = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + '일월화수목금토'[d.getDay()] + '요일 · ' + SITE_NAME; })();
 $('#demoNotice').hidden = !DEMO;
 $('#noServer').hidden = DEMO || !!API_URL;
 $('#demoPanel').hidden = !DEMO;
@@ -418,7 +475,7 @@ function show(view){
   $('#who').hidden = !isAdmin;
   $('#who').textContent = admin ? admin.name + ' 님' : '';
   for (const b of document.querySelectorAll('.tab')) b.setAttribute('aria-selected', String(b.dataset.tab === view));
-  document.querySelector('meta[name=theme-color]').content = isAdmin ? '#1c2533' : '#1d5fa8';
+  document.querySelector('meta[name=theme-color]').content = isAdmin ? '#2b2620' : '#f4efe7';
   try { history.replaceState(null, '', view === 'worker' ? location.pathname : '#' + (isAdmin ? view : 'admin')); } catch(e){}
   clearInterval(pollT);
   if (view === 'status') { loadAdmin(); pollT = setInterval(() => { if (!document.hidden) loadAdmin(true); }, 60000); }
@@ -488,24 +545,25 @@ function renumber(){
 function addLine(){
   const id = ++lineSeq;
   const el = document.createElement('div');
-  el.className = 'line'; el.dataset.id = id;
+  el.className = 'card line'; el.dataset.id = id;
   const last = [...$('#lines').children].pop();
   const prevProc = last ? $('#l' + last.dataset.id + '-process').value : (local.get('lastProc') || '');
   el.innerHTML = `
-    <div class="line-head"><span class="line-no"></span><button type="button" class="linkish rm">이 작업 빼기</button></div>
-    <label class="fld"><span>공정</span><select id="l${id}-process">${procOptions(prevProc)}</select></label>
-    <label class="fld"><span>품번 / 차종</span><input id="l${id}-part" autocomplete="off" placeholder="예: 91210-AB010"></label>
-    <div class="row3">
-      <label class="fld"><span>생산수량</span><input id="l${id}-qty" type="number" inputmode="numeric" min="0" placeholder="0"></label>
-      <label class="fld"><span>불량</span><input id="l${id}-ng" type="number" inputmode="numeric" min="0" placeholder="0"></label>
-      <label class="fld"><span>작업시간(h)</span><input id="l${id}-hours" type="number" inputmode="decimal" min="0" step="0.5" placeholder="8"></label>
-    </div>`;
+    <div class="card-h"><h3 class="line-no"></h3><button type="button" class="linkish rm">빼기</button></div>
+    <label class="row" for="l${id}-process"><span class="k">공정</span><select id="l${id}-process">${procOptions(prevProc)}</select></label>
+    <label class="row" for="l${id}-part"><span class="k">품번</span><input id="l${id}-part" autocomplete="off" placeholder="예: 91210-AB010"></label>
+    <label class="row" for="l${id}-qty"><span class="k">생산수량</span><input id="l${id}-qty" type="number" inputmode="numeric" min="0" placeholder="0"><span class="u">개</span></label>
+    <label class="row" for="l${id}-ng"><span class="k">불량</span><input id="l${id}-ng" type="number" inputmode="numeric" min="0" placeholder="0"><span class="u">개</span></label>
+    <label class="row" for="l${id}-hours"><span class="k">작업시간</span><input id="l${id}-hours" type="number" inputmode="decimal" min="0" step="0.5" placeholder="0"><span class="u">시간</span></label>`;
   el.querySelector('.rm').addEventListener('click', () => { el.remove(); renumber(); });
+  const sel = el.querySelector('select');
+  const mark = () => sel.classList.toggle('empty', !sel.value);
+  sel.addEventListener('change', mark); mark();
   $('#lines').appendChild(el);
   renumber();
 }
 function refreshLists(){
-  document.querySelectorAll('#lines select').forEach(s => { const v = s.value; s.innerHTML = procOptions(v); });
+  document.querySelectorAll('#lines select').forEach(s => { const v = s.value; s.innerHTML = procOptions(v); s.classList.toggle('empty', !s.value); });
   const ap = $('#a-proc'), av = ap.value;
   ap.innerHTML = '<option value="">전체 공정</option>' + cfg.processes.map(p => `<option${p === av ? ' selected' : ''}>${esc(p)}</option>`).join('');
 }
@@ -543,6 +601,8 @@ $('#reportForm').addEventListener('submit', async e => {
     await api('submit', { key: deviceKey, report: { date, shift, worker, lines, note: $('#f-note').value.trim() } });
     local.set('workerName', worker); local.set('lastProc', lines[lines.length - 1].process);
     $('#lines').innerHTML = ''; addLine(); $('#f-note').value = '';
+    const dm = $('#doneMsg'); dm.textContent = worker + '님, 실적이 제출됐어요 (' + nowText().slice(11) + ')'; dm.hidden = false;
+    clearTimeout(dm._t); dm._t = setTimeout(() => dm.hidden = true, 6000);
     toast('실적을 제출했습니다');
     loadMine();
   } catch (err) {
@@ -559,6 +619,7 @@ async function loadMine(){
   for (const r of list) { if (!groups.has(r.id)) groups.set(r.id, []); groups.get(r.id).push(r); }
   const box = $('#mine'); box.innerHTML = '';
   $('#mineWrap').hidden = groups.size === 0;
+  $('#mineDate').textContent = date.slice(5).replace('-', '/');
   for (const [id, g] of groups) {
     const qty = g.reduce((a, r) => a + r.qty, 0);
     const row = document.createElement('div'); row.className = 'mine-item';
