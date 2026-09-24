@@ -422,8 +422,8 @@ const I18N = {
     mineTitle: '제출 내역', mineHint: '이 휴대폰에서 낸 실적이에요. 잘못 적었으면 삭제하고 다시 제출하세요.',
     noServer: '아직 서버에 연결되지 않았습니다. 관리자에게 문의하세요.',
     line: '작업 {n}', remove: '빼기', process: '공정', pickProc: '공정 선택', part: '품번', partPh: '예: 91210-AB010',
-    qty: '생산수량', ng: '불량', ea: '개', time: '작업시간', start: '시작', end: '종료', dur: '{h}시간',
-    dawn: '{d}일 새벽', nightRule: '야간조는 {n}일 07:00 이전 작업까지 {d}일 작업으로 기록돼요',
+    qty: '생산수량', ng: '불량', ea: '개', time: '작업시간', start: '시작', end: '종료', dur: '{m}분',
+    nightRule: '야간조는 {n}일 07:00 이전 작업까지 {d}일 작업으로 기록돼요',
     autoNight: '07시 이전이라 {d}일 야간조 작업으로 맞췄어요', needTimeFmt: '작업 {n}의 시각을 11:25처럼 적어 주세요',
     needName: '사번을 입력하세요', needDate: '날짜를 선택하세요', needProc: '작업 {n}의 공정을 선택하세요',
     needTime: '작업 {n}의 시작·종료 시각을 모두 고르세요', needQty: '생산수량을 하나 이상 입력하세요',
@@ -442,8 +442,8 @@ const I18N = {
     mineTitle: 'ប្រវត្តិដាក់ស្នើ', mineHint: 'នេះជាលទ្ធផលដែលបានដាក់ស្នើពីទូរស័ព្ទនេះ។ បើសរសេរខុស សូមលុប ហើយដាក់ស្នើម្ដងទៀត។',
     noServer: 'មិនទាន់ភ្ជាប់ម៉ាស៊ីនមេនៅឡើយ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។',
     line: 'ការងារទី {n}', remove: 'ដកចេញ', process: 'ដំណើរការ', pickProc: 'ជ្រើសរើសដំណើរការ', part: 'លេខកូដ', partPh: 'ឧ. 91210-AB010',
-    qty: 'ចំនួនផលិត', ng: 'ខូច', ea: 'គ្រឿង', time: 'ម៉ោងធ្វើការ', start: 'ចាប់ផ្ដើម', end: 'បញ្ចប់', dur: '{h} ម៉ោង',
-    dawn: 'ព្រឹកព្រលឹមថ្ងៃទី {d}', nightRule: 'វេនយប់៖ ការងាររហូតដល់មុនម៉ោង 07:00 ថ្ងៃទី {n} ត្រូវកត់ត្រាជាការងារថ្ងៃទី {d}',
+    qty: 'ចំនួនផលិត', ng: 'ខូច', ea: 'គ្រឿង', time: 'ម៉ោងធ្វើការ', start: 'ចាប់ផ្ដើម', end: 'បញ្ចប់', dur: '{m} នាទី',
+    nightRule: 'វេនយប់៖ ការងាររហូតដល់មុនម៉ោង 07:00 ថ្ងៃទី {n} ត្រូវកត់ត្រាជាការងារថ្ងៃទី {d}',
     autoNight: 'ដោយសារមុនម៉ោង 07:00 បានកំណត់ជាការងារវេនយប់ ថ្ងៃទី {d}', needTimeFmt: 'សូមសរសេរម៉ោងសម្រាប់ការងារទី {n} ដូចជា 11:25',
     needName: 'សូមបញ្ចូលលេខបុគ្គលិក', needDate: 'សូមជ្រើសរើសកាលបរិច្ឆេទ', needProc: 'សូមជ្រើសរើសដំណើរការ សម្រាប់ការងារទី {n}',
     needTime: 'សូមជ្រើសរើសម៉ោងចាប់ផ្ដើម និងម៉ោងបញ្ចប់ សម្រាប់ការងារទី {n}', needQty: 'សូមបញ្ចូលចំនួនផលិតយ៉ាងហោចណាស់មួយ',
@@ -479,14 +479,14 @@ async function sha256(s){
 function demoGet(k, fb){ try { const v = JSON.parse(local.get(k) || 'null'); return v == null ? fb : v; } catch(e){ return fb; } }
 function demoSeed(){
   const d = today();
-  const mk = (id, worker, shift, time, process, part, qty, ng, hours, note, t) => ({ id, date: d, shift, worker, time, process, part, qty, ng, hours, note, createdAt: d + ' ' + t, key: 'seed', example: true });
+  const mk = (id, worker, shift, time, process, part, qty, ng, note, t) => { const [s, e] = time.split('~'); return { id, date: d, shift, worker, time, process, part, qty, ng, mins: spanMins(s, e), note, createdAt: d + ' ' + t, key: 'seed', example: true }; };
   return [
-    mk('ex1', '1001', '주간', '08:00~17:00', '절단·압착', '91210-AB010', 3200, 6, 9, '', '17:10'),
-    mk('ex2', '1002', '주간', '08:00~12:00', '서브조립', '91210-AB010', 420, 2, 4, '오전 자재 대기 30분', '17:12'),
-    mk('ex2', '1002', '주간', '13:00~17:00', '조립', '91850-CD200', 180, 1, 4, '오전 자재 대기 30분', '17:12'),
-    mk('ex3', '1003', '야간', '20:00~24:00', '통전검사', '91210-AB010', 310, 2, 4, '', '07:05'),
-    mk('ex3', '1003', '야간', '01:00~05:00', '통전검사', '91210-AB010', 300, 2, 4, '', '07:05'),
-    mk('ex4', '1004', '주간', '08:00~17:00', '절단·압착', '91850-CD200', 2750, 11, 9, '3호기 압착고 조정', '17:20')
+    mk('ex1', '1001', '주간', '08:00~17:00', '절단·압착', '91210-AB010', 3200, 6, '', '17:10'),
+    mk('ex2', '1002', '주간', '08:00~12:00', '서브조립', '91210-AB010', 420, 2, '오전 자재 대기 30분', '17:12'),
+    mk('ex2', '1002', '주간', '13:00~17:00', '조립', '91850-CD200', 180, 1, '오전 자재 대기 30분', '17:12'),
+    mk('ex3', '1003', '야간', '20:00~00:00', '통전검사', '91210-AB010', 310, 2, '', '07:05'),
+    mk('ex3', '1003', '야간', '01:00~05:00', '통전검사', '91210-AB010', 300, 2, '', '07:05'),
+    mk('ex4', '1004', '주간', '08:00~17:00', '절단·압착', '91850-CD200', 2750, 11, '3호기 압착고 조정', '17:20')
   ];
 }
 async function demoApi(p){
@@ -501,7 +501,7 @@ async function demoApi(p){
     case 'config': return { processes: conf.processes };
     case 'submit': {
       const id = rid(), r = p.report;
-      for (const l of r.lines) rows.push({ id, date: r.date, shift: r.shift, worker: r.worker, process: l.process, part: l.part, qty: l.qty, ng: l.ng, hours: l.hours, time: l.start && l.end ? l.start + '~' + l.end : '', note: r.note, createdAt: nowText(), key: p.key });
+      for (const l of r.lines) rows.push({ id, date: r.date, shift: r.shift, worker: r.worker, process: l.process, part: l.part, qty: l.qty, ng: l.ng, mins: l.mins, time: l.start && l.end ? l.start + '~' + l.end : '', note: r.note, createdAt: nowText(), key: p.key });
       save(rows); return { id };
     }
     case 'mine': return rows.filter(r => r.date === p.date && r.key === p.key).map(pub);
@@ -625,7 +625,9 @@ function fixEnd(start, end){
   if (b <= a && b < 720 && b + 720 > a) return fromMin(b + 720);
   return end;
 }
-function spanHours(a, b){ if (!a || !b) return 0; let d = toMin(b) - toMin(a); if (d <= 0) d += 1440; return Math.round(d / 60 * 100) / 100; }
+// 시작~종료 사이 분 (자정을 넘기면 다음 날로: 22:30~01:30 = 180분)
+function spanMins(a, b){ if (!a || !b) return 0; let d = toMin(b) - toMin(a); if (d <= 0) d += 1440; return d; }
+const minsOf = r => Number(r.mins ?? r.hours) || 0;
 function markEmpty(el){ el.querySelectorAll('select').forEach(s => s.classList.toggle('empty', !s.value)); }
 const NIGHT_CUT = 7 * 60;   // 야간조: 다음날 07:00 이전 작업은 전날(근무 시작일) 야간조 작업
 const curShift = () => document.querySelector('input[name=shift]:checked').value;
@@ -645,16 +647,10 @@ function tidyTimes(el){
   if (end) eIn.value = end; eIn.classList.toggle('bad', end === null);
   return { start, end };
 }
-function nextDayLabel(){
-  const d = new Date($('#f-date').value + 'T00:00'); if (isNaN(d)) return '';
-  d.setDate(d.getDate() + 1); return t('dawn', { d: d.getDate() });
-}
 function updateDur(el){
   const id = el.dataset.id, { start, end } = readTimes(el);
-  const h = spanHours(start, end);
-  let txt = h ? t('dur', { h: h }) : '';
-  if (curShift() === '야간' && start && toMin(start) < NIGHT_CUT) txt += (txt ? ' · ' : '') + nextDayLabel();
-  $('#l' + id + '-dur').textContent = txt;
+  const m = spanMins(start, end);
+  $('#l' + id + '-dur').textContent = m ? t('dur', { m: m }) : '';
 }
 // 새벽(07시 전)에 열면 전날 야간조로 자동 설정
 function yesterday(){ const d = new Date(); d.setDate(d.getDate() - 1); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
@@ -756,12 +752,13 @@ $('#reportForm').addEventListener('submit', async e => {
       qty: n($('#l' + id + '-qty').value),
       ng: n($('#l' + id + '-ng').value),
       start: tm.start || '', end: tm.end || '',
-      hours: spanHours(tm.start, tm.end)
+      mins: spanMins(tm.start, tm.end)
     };
     if (!l.qty && !l.ng) continue;
     if (!l.process) { toast(t('needProc', { n: no })); return; }
     if (tm.start === null || tm.end === null) { toast(t('needTimeFmt', { n: no })); return; }
     if (!!l.start !== !!l.end) { toast(t('needTime', { n: no })); return; }
+    l.hours = l.mins;   // 예전 서버 코드와 호환 (작업시간 열에 분이 들어감)
     lines.push(l);
   }
   if (!lines.length) { toast(t('needQty')); return; }
@@ -827,11 +824,11 @@ function roster(){
   return cfg.workers.map(line => { const m = String(line).trim().match(/^(\S+)\s*(.*)$/); return m ? { id: m[1], name: m[2].trim() } : null; }).filter(Boolean);
 }
 function whoOf(id){ const r = roster().find(x => x.id === id); return r && r.name ? id + ' ' + r.name : id; }
-// 야간조 새벽(07시 전) 작업은 '익일'로 표시하고, 정렬할 때도 그날 밤 뒤로 보냄
+// 입력한 시각 그대로 표시. 정렬할 때만 야간조 새벽(07시 전) 작업을 그날 밤 뒤로 보냄
 function timeText(r){
   if (!r.time) return '';
   const s = r.time.split('~')[0];
-  return (r.shift === '야간' && s && toMin(s) < NIGHT_CUT ? '익일 ' : '') + r.time;
+  return r.time;
 }
 function timeKey(r){
   const s = (r.time || '').split('~')[0]; if (!s) return 9999;
@@ -845,12 +842,13 @@ function flatRows(){
 
 function renderAdmin(){
   const list = flatRows();
-  const qty = list.reduce((a, r) => a + r.qty, 0), ng = list.reduce((a, r) => a + r.ng, 0), hrs = list.reduce((a, r) => a + r.hours, 0);
+  const qty = list.reduce((a, r) => a + r.qty, 0), ng = list.reduce((a, r) => a + r.ng, 0), mins = list.reduce((a, r) => a + minsOf(r), 0);
+  const uph = (q, m) => m ? fmt(q / (m / 60)) : '–';   // UPH = 시간당 생산량
   const people = new Set(list.map(r => r.worker));
   $('#kpis').innerHTML = `
     <div class="kpi"><div class="k">총 생산</div><div class="v">${fmt(qty)}</div><div class="s">EA</div></div>
     <div class="kpi"><div class="k">총 불량</div><div class="v ng">${fmt(ng)}</div><div class="s">불량률 ${pct(ng, qty)}</div></div>
-    <div class="kpi"><div class="k">작업시간 합계</div><div class="v">${hrs.toLocaleString('ko-KR')}</div><div class="s">시간 · UPH ${hrs ? fmt(qty / hrs) : '–'}</div></div>
+    <div class="kpi"><div class="k">작업시간 합계</div><div class="v">${fmt(mins)}</div><div class="s">분 · UPH ${uph(qty, mins)}</div></div>
     <div class="kpi"><div class="k">제출 인원</div><div class="v">${people.size}</div><div class="s">${cfg.workers.length ? '명단 ' + cfg.workers.length + '명 중' : '명'}</div></div>`;
 
   const m = $('#missing');
@@ -865,8 +863,8 @@ function renderAdmin(){
   for (const r of list) {
     if (!byProc.has(r.process)) byProc.set(r.process, new Map());
     const w = byProc.get(r.process);
-    if (!w.has(r.worker)) w.set(r.worker, { qty: 0, ng: 0, hours: 0, parts: new Set(), example: false });
-    const a = w.get(r.worker); a.qty += r.qty; a.ng += r.ng; a.hours += r.hours; if (r.part) a.parts.add(r.part); a.example = a.example || !!r.example;
+    if (!w.has(r.worker)) w.set(r.worker, { qty: 0, ng: 0, mins: 0, parts: new Set(), example: false });
+    const a = w.get(r.worker); a.qty += r.qty; a.ng += r.ng; a.mins += minsOf(r); if (r.part) a.parts.add(r.part); a.example = a.example || !!r.example;
   }
   const order = cfg.processes;
   const procs = [...byProc.keys()].sort((a, b) => { const ia = order.indexOf(a), ib = order.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
@@ -876,21 +874,21 @@ function renderAdmin(){
   } else {
     pl.innerHTML = procs.map(p => {
       const ws = [...byProc.get(p).entries()].sort((a, b) => b[1].qty - a[1].qty);
-      const pq = ws.reduce((s, [, a]) => s + a.qty, 0), pn = ws.reduce((s, [, a]) => s + a.ng, 0), ph = ws.reduce((s, [, a]) => s + a.hours, 0);
+      const pq = ws.reduce((s, [, a]) => s + a.qty, 0), pn = ws.reduce((s, [, a]) => s + a.ng, 0), pm = ws.reduce((s, [, a]) => s + a.mins, 0);
       const max = Math.max(1, ...ws.map(([, a]) => a.qty));
       return `<article class="proc">
         <div class="proc-head"><h3>${esc(p)}</h3>
-          <div class="proc-stats"><span>생산 <b>${fmt(pq)}</b></span><span>불량 <b class="ngv">${fmt(pn)}</b></span><span>불량률 <b>${pct(pn, pq)}</b></span><span>UPH <b>${ph ? fmt(pq / ph) : '–'}</b></span><span>인원 <b>${ws.length}</b></span></div>
+          <div class="proc-stats"><span>생산 <b>${fmt(pq)}</b></span><span>불량 <b class="ngv">${fmt(pn)}</b></span><span>불량률 <b>${pct(pn, pq)}</b></span><span>작업 <b>${fmt(pm)}</b>분</span><span>UPH <b>${uph(pq, pm)}</b></span><span>인원 <b>${ws.length}</b></span></div>
         </div>
         <div class="tbl-wrap"><table>
-          <thead><tr><th>사번</th><th class="barcell"></th><th class="r">생산</th><th class="r">불량</th><th class="r">시간</th><th class="r">UPH</th><th>품번</th></tr></thead>
+          <thead><tr><th>사번</th><th class="barcell"></th><th class="r">생산</th><th class="r">불량</th><th class="r">작업(분)</th><th class="r">UPH</th><th>품번</th></tr></thead>
           <tbody>${ws.map(([name, a]) => `<tr>
             <td>${esc(whoOf(name))}${a.example ? '<span class="pill">예시</span>' : ''}</td>
             <td class="barcell"><div class="bar"><i style="width:${(a.qty / max * 100).toFixed(1)}%"></i></div></td>
             <td class="r num">${fmt(a.qty)}</td>
             <td class="r num ${a.ng ? 'ngtxt' : 'muted'}">${fmt(a.ng)}</td>
-            <td class="r num">${a.hours || '–'}</td>
-            <td class="r num">${a.hours ? fmt(a.qty / a.hours) : '–'}</td>
+            <td class="r num">${a.mins ? fmt(a.mins) : '–'}</td>
+            <td class="r num">${uph(a.qty, a.mins)}</td>
             <td class="muted">${[...a.parts].map(esc).join(', ') || '–'}</td></tr>`).join('')}</tbody>
         </table></div></article>`;
     }).join('');
@@ -898,12 +896,12 @@ function renderAdmin(){
 
   const tbl = $('#rawTbl');
   if (!list.length) { tbl.innerHTML = '<tbody><tr><td class="muted">표시할 기록이 없습니다</td></tr></tbody>'; return; }
-  tbl.innerHTML = `<thead><tr><th>날짜</th><th>조</th><th>사번</th><th>작업시간</th><th>공정</th><th>품번</th><th class="r">생산</th><th class="r">불량</th><th class="r">시간</th><th>특이사항</th><th>제출</th><th></th></tr></thead>
+  tbl.innerHTML = `<thead><tr><th>날짜</th><th>조</th><th>사번</th><th>작업시간</th><th>공정</th><th>품번</th><th class="r">생산</th><th class="r">불량</th><th class="r">작업(분)</th><th>특이사항</th><th>제출</th><th></th></tr></thead>
     <tbody>${list.map(r => `<tr>
       <td class="num">${esc(r.date.slice(5))}</td><td>${esc(r.shift)}</td><td>${esc(whoOf(r.worker))}${r.example ? '<span class="pill">예시</span>' : ''}</td>
       <td class="num">${esc(timeText(r)) || '<span class="muted">–</span>'}</td>
       <td>${esc(r.process)}</td><td class="muted">${esc(r.part) || '–'}</td>
-      <td class="r num">${fmt(r.qty)}</td><td class="r num ${r.ng ? 'ngtxt' : 'muted'}">${fmt(r.ng)}</td><td class="r num">${r.hours || '–'}</td>
+      <td class="r num">${fmt(r.qty)}</td><td class="r num ${r.ng ? 'ngtxt' : 'muted'}">${fmt(r.ng)}</td><td class="r num">${minsOf(r) ? fmt(minsOf(r)) : '–'}</td>
       <td class="muted">${esc(r.note)}</td><td class="num muted">${esc(String(r.createdAt).slice(11, 16))}</td>
       <td><button type="button" class="btn small danger" data-del="${esc(r.id)}">삭제</button></td></tr>`).join('')}</tbody>`;
 }
@@ -914,8 +912,8 @@ $('#rawTbl').addEventListener('click', async e => {
   try { await adminApi('remove', { id: b.dataset.del }); toast('실적 한 건을 삭제했습니다'); loadAdmin(); } catch(err) { toast(errText(err)); }
 });
 
-const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','품번','생산수량','불량수량','작업시간(h)','특이사항','제출시각'];
-const rowVals = r => { const w = roster().find(x => x.id === r.worker); return [r.date, r.shift, r.worker, w ? w.name : '', timeText(r), r.process, r.part, r.qty, r.ng, r.hours, r.note, r.createdAt]; };
+const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','품번','생산수량','불량수량','작업시간(분)','특이사항','제출시각'];
+const rowVals = r => { const w = roster().find(x => x.id === r.worker); return [r.date, r.shift, r.worker, w ? w.name : '', timeText(r), r.process, r.part, r.qty, r.ng, minsOf(r), r.note, r.createdAt]; };
 $('#copyTsv').addEventListener('click', async () => {
   const list = flatRows(); if (!list.length) { toast('복사할 기록이 없습니다'); return; }
   const tsv = [HEAD, ...list.map(rowVals)].map(a => a.map(v => String(v ?? '').replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
