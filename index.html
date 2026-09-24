@@ -10,6 +10,9 @@
 <title>작업일보</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&display=swap">
 <script>
 /* ============================================================
    설정
@@ -31,7 +34,7 @@ const SITE_NAME = "생산 현장";
   --ng:#c8412f;--ng-soft:#f9e6e0;--ok:#4f7d3a;--ok-soft:#e8f0df;--warn:#a26a00;--warn-soft:#f8ecd2;--bar:#ecdfcd;
   --bar-bg:rgba(239,230,216,.82);--bar-ink:#2b2620;--bar-sub:#9c9184;--chip:#e9dfd1;--chip-ink:#5e554a;
   --badge:#ffd23f;--badge-ink:#191f28;
-  --sans:"Pretendard Variable","Pretendard",-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  --sans:"Pretendard Variable","Pretendard","Kantumruy Pro",-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
   --r:20px;--r-s:12px;
   --shadow:0 1px 2px rgba(74,52,28,.06),0 4px 14px -8px rgba(74,52,28,.10);
 }
@@ -111,6 +114,24 @@ body.is-admin .mode{background:var(--badge);color:var(--badge-ink);font-weight:7
 .row select{appearance:none;-webkit-appearance:none;cursor:pointer;text-align:right;text-align-last:right;padding-right:20px;background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);background-position:calc(100% - 9px) 50%,calc(100% - 4px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
 .row select:invalid,.row select.empty{color:var(--ink-3);font-weight:400}
 .row .u{flex:none;color:var(--ink-3);font-size:15px;margin-left:-4px}
+.row input.numin{font-variant-numeric:tabular-nums}
+/* 작업시간 11:25 ~ 12:30 직접 입력 */
+.time-row .k{display:flex;flex-direction:column;line-height:1.3}
+.time-row .dur{font-size:13px;font-weight:600;color:var(--accent);margin-top:2px}
+.trange{flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.row .trange input.tin{flex:0 1 84px;width:84px;text-align:center;font-variant-numeric:tabular-nums;background:var(--fill);border-radius:10px;padding:8px 6px;min-height:44px}
+.row .trange input.tin::placeholder{font-size:14px}
+.row .trange input.tin:focus-visible{outline:2px solid var(--accent);outline-offset:0}
+.row .trange input.tin.bad{outline:2px solid var(--ng);outline-offset:0;color:var(--ng)}
+.tilde{color:var(--ink-3);font-weight:600}
+.shift-note{margin:0 0 14px;padding:10px 12px;border-radius:var(--r-s);background:var(--accent-soft);color:var(--accent);font-size:14px;font-weight:500;line-height:1.5}
+/* 언어 전환 버튼 */
+.lang-btn{border:1px solid color-mix(in srgb,var(--bar-ink) 22%,transparent)!important;border-radius:99px!important;padding:6px 12px!important;font-family:"Kantumruy Pro",var(--sans)}
+/* 크메르어: 글자가 위아래로 길어서 줄 간격·칸 폭을 넉넉하게 */
+html[lang="km"] body{line-height:1.65}
+html[lang="km"] .row .k{width:auto;max-width:44%;line-height:1.35}
+html[lang="km"] .hello h2{font-size:24px;line-height:1.5}
+html[lang="km"] .btn.primary{font-size:17px}
 .row.col{flex-direction:column;align-items:stretch;gap:6px;padding-block:14px}
 .row.col .k{width:auto}
 .row textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--fill);border:0;border-radius:var(--r-s);padding:12px 14px;min-height:84px;resize:vertical;width:100%}
@@ -228,7 +249,8 @@ tr:last-child td{border-bottom:0}
       </div>
       <div class="band-r">
         <span class="who" id="who" hidden></span>
-        <button type="button" class="band-btn" id="toAdmin">관리자</button>
+        <button type="button" class="band-btn lang-btn" id="langBtn" lang="km">ភាសាខ្មែរ</button>
+        <button type="button" class="band-btn" id="toAdmin" data-i18n="admin">관리자</button>
         <button type="button" class="band-btn" id="logout" hidden>로그아웃</button>
       </div>
     </div>
@@ -243,42 +265,43 @@ tr:last-child td{border-bottom:0}
 
 <div class="wrap">
   <p class="notice" id="demoNotice" hidden>연습 모드입니다. 아직 구글 시트에 연결되지 않아서 입력한 내용이 이 컴퓨터에만 저장돼요.</p>
-  <p class="notice" id="noServer" hidden>아직 서버에 연결되지 않았습니다. 관리자에게 문의하세요.</p>
+  <p class="notice" id="noServer" hidden data-i18n="noServer">아직 서버에 연결되지 않았습니다. 관리자에게 문의하세요.</p>
 
   <!-- ============ 작업자: 실적 입력 (로그인 없음) ============ -->
   <section id="workerView">
     <div class="hello">
-      <h2>실적 입력</h2>
+      <h2 data-i18n="title">실적 입력</h2>
       <p id="helloSub"></p>
     </div>
 
     <form id="reportForm" class="stack" novalidate>
       <div class="card">
-        <label class="row" for="f-worker"><span class="k">이름</span><input id="f-worker" autocomplete="name" placeholder="이름 입력" maxlength="30"></label>
-        <label class="row" for="f-date"><span class="k">날짜</span><input type="date" id="f-date"></label>
-        <div class="row"><span class="k" id="shiftLab">근무</span>
+        <label class="row" for="f-worker"><span class="k" data-i18n="name">사번</span><input id="f-worker" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="사번 입력" data-i18n-ph="namePh" maxlength="30"></label>
+        <label class="row" for="f-date"><span class="k" data-i18n="date">날짜</span><input type="date" id="f-date"></label>
+        <div class="row"><span class="k" id="shiftLab" data-i18n="shift">근무</span>
           <div class="seg" role="radiogroup" aria-labelledby="shiftLab">
-            <label><input type="radio" name="shift" id="s-day" value="주간" checked><span>주간</span></label>
-            <label><input type="radio" name="shift" id="s-night" value="야간"><span>야간</span></label>
+            <label><input type="radio" name="shift" id="s-day" value="주간" checked><span data-i18n="day">주간</span></label>
+            <label><input type="radio" name="shift" id="s-night" value="야간"><span data-i18n="night">야간</span></label>
           </div>
         </div>
+        <p class="shift-note" id="shiftNote" hidden></p>
       </div>
 
       <div class="lines" id="lines"></div>
-      <button type="button" class="add-btn" id="addLine">＋ 다른 공정·품번 추가</button>
+      <button type="button" class="add-btn" id="addLine" data-i18n="addLine">＋ 다른 공정·품번 추가</button>
 
       <div class="card">
-        <label class="row col" for="f-note"><span class="k">특이사항</span><textarea id="f-note" placeholder="설비 고장, 자재 대기 등 (없으면 비워두세요)"></textarea></label>
+        <label class="row col" for="f-note"><span class="k" data-i18n="note">특이사항</span><textarea id="f-note" placeholder="설비 고장, 자재 대기 등 (없으면 비워두세요)" data-i18n-ph="notePh"></textarea></label>
       </div>
 
       <div class="done" id="doneMsg" role="status" hidden></div>
-      <div class="submit-bar"><button type="submit" class="btn primary" id="submitBtn">실적 제출</button></div>
+      <div class="submit-bar"><button type="submit" class="btn primary" id="submitBtn" data-i18n="submit">실적 제출</button></div>
     </form>
 
     <div class="card mine-card" id="mineWrap" hidden>
-      <div class="card-h"><h3>제출 내역</h3><span class="hint" id="mineDate"></span></div>
+      <div class="card-h"><h3 data-i18n="mineTitle">제출 내역</h3><span class="hint" id="mineDate"></span></div>
       <div class="mine" id="mine"></div>
-      <p class="hint" style="padding-block:4px 16px">이 휴대폰에서 낸 실적이에요. 잘못 적었으면 삭제하고 다시 제출하세요.</p>
+      <p class="hint" style="padding-block:4px 16px" data-i18n="mineHint">이 휴대폰에서 낸 실적이에요. 잘못 적었으면 삭제하고 다시 제출하세요.</p>
     </div>
   </section>
 
@@ -327,7 +350,7 @@ tr:last-child td{border-bottom:0}
     <div class="sheet">
       <div class="panel">
         <label class="fld"><span>공정 목록 (한 줄에 하나)</span><textarea id="s-procs" rows="7"></textarea></label>
-        <label class="fld"><span>작업자 명단 (한 줄에 하나, 비워도 됨)</span><textarea id="s-workers" rows="7" placeholder="명단을 넣으면 현황에서 미제출자를 알려줍니다. 작업자가 입력하는 이름과 똑같이 적으세요."></textarea></label>
+        <label class="fld"><span>사번 명단 (한 줄에 한 명: 사번 이름, 비워도 됨)</span><textarea id="s-workers" rows="7" placeholder="예)&#10;1023 김철수&#10;1024 Sokha&#10;명단을 넣으면 현황에 이름이 같이 보이고 미제출자를 알려줍니다."></textarea></label>
         <button type="button" class="btn primary" id="saveCfg">설정 저장</button>
       </div>
       <p class="hint">관리자 아이디·비밀번호는 구글 시트의 ‘관리자’ 탭에서 바꿀 수 있어요.</p>
@@ -389,16 +412,61 @@ const adminApi = (action, payload) => api(action, payload, true).catch(e => {
   if (e && e.code === 'bad_login' && action !== 'login') logout('다시 로그인하세요');
   throw e;
 });
-function errText(e){
-  switch (e && e.code) {
-    case 'network': return '인터넷 연결을 확인하고 다시 시도하세요';
-    case 'bad_login': return '아이디 또는 비밀번호가 맞지 않습니다';
-    case 'locked': return '비밀번호를 여러 번 틀렸습니다. 5분 뒤에 다시 시도하세요';
-    case 'forbidden': return '다른 휴대폰에서 낸 실적은 관리자만 지울 수 있어요';
-    case 'bad_request': return '입력 내용을 다시 확인하세요';
-    case 'no_server': return '아직 서버에 연결되지 않았습니다';
-    default: return '처리하지 못했습니다. 잠시 후 다시 시도하세요';
+/* ---------- 언어: 작업자 화면은 한국어 / 크메르어 (관리자 화면은 한국어) ---------- */
+const I18N = {
+  ko: {
+    admin: '관리자', workerMode: '작업자 모드', title: '실적 입력',
+    name: '사번', namePh: '사번 입력', date: '날짜', shift: '근무', day: '주간', night: '야간',
+    addLine: '＋ 다른 공정·품번 추가', note: '특이사항', notePh: '설비 고장, 자재 대기 등 (없으면 비워두세요)',
+    submit: '실적 제출', submitting: '제출하는 중…',
+    mineTitle: '제출 내역', mineHint: '이 휴대폰에서 낸 실적이에요. 잘못 적었으면 삭제하고 다시 제출하세요.',
+    noServer: '아직 서버에 연결되지 않았습니다. 관리자에게 문의하세요.',
+    line: '작업 {n}', remove: '빼기', process: '공정', pickProc: '공정 선택', part: '품번', partPh: '예: 91210-AB010',
+    qty: '생산수량', ng: '불량', ea: '개', time: '작업시간', start: '시작', end: '종료', dur: '{h}시간',
+    dawn: '{d}일 새벽', nightRule: '야간조는 {n}일 07:00 이전 작업까지 {d}일 작업으로 기록돼요',
+    autoNight: '07시 이전이라 {d}일 야간조 작업으로 맞췄어요', needTimeFmt: '작업 {n}의 시각을 11:25처럼 적어 주세요',
+    needName: '사번을 입력하세요', needDate: '날짜를 선택하세요', needProc: '작업 {n}의 공정을 선택하세요',
+    needTime: '작업 {n}의 시작·종료 시각을 모두 고르세요', needQty: '생산수량을 하나 이상 입력하세요',
+    done: '사번 {name} 실적이 제출됐어요 ({t})', sent: '실적을 제출했습니다',
+    del: '삭제', delSure: '정말 삭제', deleted: '삭제했습니다', mineSub: '생산 {q} · {t} 제출',
+    dateFmt: d => (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + '일월화수목금토'[d.getDay()] + '요일',
+    err_network: '인터넷 연결을 확인하고 다시 시도하세요', err_forbidden: '다른 휴대폰에서 낸 실적은 관리자만 지울 수 있어요',
+    err_bad_request: '입력 내용을 다시 확인하세요', err_no_server: '아직 서버에 연결되지 않았습니다',
+    err_default: '처리하지 못했습니다. 잠시 후 다시 시도하세요'
+  },
+  km: {
+    admin: 'អ្នកគ្រប់គ្រង', workerMode: 'សម្រាប់កម្មករ', title: 'បញ្ចូលលទ្ធផលការងារ',
+    name: 'លេខបុគ្គលិក', namePh: 'បញ្ចូលលេខបុគ្គលិក', date: 'កាលបរិច្ឆេទ', shift: 'វេន', day: 'វេនថ្ងៃ', night: 'វេនយប់',
+    addLine: '＋ បន្ថែមការងារផ្សេងទៀត', note: 'កំណត់សម្គាល់', notePh: 'ម៉ាស៊ីនខូច រង់ចាំសម្ភារៈ ។ល។ (ទុកទទេ បើគ្មាន)',
+    submit: 'ដាក់ស្នើលទ្ធផល', submitting: 'កំពុងដាក់ស្នើ…',
+    mineTitle: 'ប្រវត្តិដាក់ស្នើ', mineHint: 'នេះជាលទ្ធផលដែលបានដាក់ស្នើពីទូរស័ព្ទនេះ។ បើសរសេរខុស សូមលុប ហើយដាក់ស្នើម្ដងទៀត។',
+    noServer: 'មិនទាន់ភ្ជាប់ម៉ាស៊ីនមេនៅឡើយ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។',
+    line: 'ការងារទី {n}', remove: 'ដកចេញ', process: 'ដំណើរការ', pickProc: 'ជ្រើសរើសដំណើរការ', part: 'លេខកូដ', partPh: 'ឧ. 91210-AB010',
+    qty: 'ចំនួនផលិត', ng: 'ខូច', ea: 'គ្រឿង', time: 'ម៉ោងធ្វើការ', start: 'ចាប់ផ្ដើម', end: 'បញ្ចប់', dur: '{h} ម៉ោង',
+    dawn: 'ព្រឹកព្រលឹមថ្ងៃទី {d}', nightRule: 'វេនយប់៖ ការងាររហូតដល់មុនម៉ោង 07:00 ថ្ងៃទី {n} ត្រូវកត់ត្រាជាការងារថ្ងៃទី {d}',
+    autoNight: 'ដោយសារមុនម៉ោង 07:00 បានកំណត់ជាការងារវេនយប់ ថ្ងៃទី {d}', needTimeFmt: 'សូមសរសេរម៉ោងសម្រាប់ការងារទី {n} ដូចជា 11:25',
+    needName: 'សូមបញ្ចូលលេខបុគ្គលិក', needDate: 'សូមជ្រើសរើសកាលបរិច្ឆេទ', needProc: 'សូមជ្រើសរើសដំណើរការ សម្រាប់ការងារទី {n}',
+    needTime: 'សូមជ្រើសរើសម៉ោងចាប់ផ្ដើម និងម៉ោងបញ្ចប់ សម្រាប់ការងារទី {n}', needQty: 'សូមបញ្ចូលចំនួនផលិតយ៉ាងហោចណាស់មួយ',
+    done: 'លេខបុគ្គលិក {name} បានដាក់ស្នើលទ្ធផលរួចរាល់ ({t})', sent: 'បានដាក់ស្នើរួចរាល់',
+    del: 'លុប', delSure: 'ពិតជាលុប?', deleted: 'បានលុបរួចរាល់', mineSub: 'ផលិត {q} · ដាក់ស្នើម៉ោង {t}',
+    dateFmt: d => 'ថ្ងៃ' + ['អាទិត្យ', 'ច័ន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ៍', 'សុក្រ', 'សៅរ៍'][d.getDay()] + ' ' + d.getDate() + '/' + (d.getMonth() + 1),
+    err_network: 'សូមពិនិត្យអ៊ីនធឺណិត ហើយព្យាយាមម្ដងទៀត', err_forbidden: 'លទ្ធផលពីទូរស័ព្ទផ្សេង មានតែអ្នកគ្រប់គ្រងទេដែលអាចលុបបាន',
+    err_bad_request: 'សូមពិនិត្យព័ត៌មានដែលបានបញ្ចូលម្ដងទៀត', err_no_server: 'មិនទាន់ភ្ជាប់ម៉ាស៊ីនមេនៅឡើយ',
+    err_default: 'មិនអាចដំណើរការបានទេ។ សូមព្យាយាមម្ដងទៀតបន្តិចក្រោយ'
   }
+};
+let lang = local.get('lang') || ((navigator.language || '').toLowerCase().startsWith('km') ? 'km' : 'ko');
+if (!I18N[lang]) lang = 'ko';
+function t(key, vars){
+  let s = I18N[lang][key] ?? I18N.ko[key] ?? key;
+  if (vars) for (const k in vars) s = s.replace('{' + k + '}', vars[k]);
+  return s;
+}
+function errText(e){
+  const c = e && e.code;
+  if (c === 'bad_login') return '아이디 또는 비밀번호가 맞지 않습니다';
+  if (c === 'locked') return '비밀번호를 여러 번 틀렸습니다. 5분 뒤에 다시 시도하세요';
+  return I18N[lang]['err_' + c] || t('err_default');
 }
 
 /* ---------- 연습 모드 (내 컴퓨터에서 열었을 때만) ---------- */
@@ -411,19 +479,20 @@ async function sha256(s){
 function demoGet(k, fb){ try { const v = JSON.parse(local.get(k) || 'null'); return v == null ? fb : v; } catch(e){ return fb; } }
 function demoSeed(){
   const d = today();
-  const mk = (id, worker, process, part, qty, ng, hours, note, t) => ({ id, date: d, shift: '주간', worker, process, part, qty, ng, hours, note, createdAt: d + ' ' + t, key: 'seed', example: true });
+  const mk = (id, worker, shift, time, process, part, qty, ng, hours, note, t) => ({ id, date: d, shift, worker, time, process, part, qty, ng, hours, note, createdAt: d + ' ' + t, key: 'seed', example: true });
   return [
-    mk('ex1', '예시-김작업', '절단·압착', '91210-AB010', 3200, 6, 8, '', '17:10'),
-    mk('ex2', '예시-이조립', '서브조립', '91210-AB010', 420, 2, 4, '오전 자재 대기 30분', '17:12'),
-    mk('ex2', '예시-이조립', '조립', '91850-CD200', 180, 1, 4, '오전 자재 대기 30분', '17:12'),
-    mk('ex3', '예시-박검사', '통전검사', '91210-AB010', 610, 4, 8, '', '17:15'),
-    mk('ex4', '예시-최압착', '절단·압착', '91850-CD200', 2750, 11, 8, '3호기 압착고 조정', '17:20')
+    mk('ex1', '1001', '주간', '08:00~17:00', '절단·압착', '91210-AB010', 3200, 6, 9, '', '17:10'),
+    mk('ex2', '1002', '주간', '08:00~12:00', '서브조립', '91210-AB010', 420, 2, 4, '오전 자재 대기 30분', '17:12'),
+    mk('ex2', '1002', '주간', '13:00~17:00', '조립', '91850-CD200', 180, 1, 4, '오전 자재 대기 30분', '17:12'),
+    mk('ex3', '1003', '야간', '20:00~24:00', '통전검사', '91210-AB010', 310, 2, 4, '', '07:05'),
+    mk('ex3', '1003', '야간', '01:00~05:00', '통전검사', '91210-AB010', 300, 2, 4, '', '07:05'),
+    mk('ex4', '1004', '주간', '08:00~17:00', '절단·압착', '91850-CD200', 2750, 11, 9, '3호기 압착고 조정', '17:20')
   ];
 }
 async function demoApi(p){
   let rows = demoGet('demo-rows', null); if (!rows) { rows = demoSeed(); local.set('demo-rows', JSON.stringify(rows)); }
   const save = r => local.set('demo-rows', JSON.stringify(r));
-  const conf = demoGet('demo-cfg', { processes: DEFAULT_PROCS, workers: ['예시-김작업', '예시-이조립', '예시-박검사', '예시-최압착', '예시-정포장'] });
+  const conf = demoGet('demo-cfg', { processes: DEFAULT_PROCS, workers: ['1001 예시김작업', '1002 예시이조립', '1003 Sokha', '1004 예시최압착', '1005 Dara'] });
   const pub = r => { const o = Object.assign({}, r); delete o.key; return o; };
   const needAdmin = async () => {
     if (String(p.user || '').trim().toLowerCase() !== DEMO_ADMIN.id || await sha256(String(p.pass || '')) !== DEMO_ADMIN.hash) throw { code: 'bad_login' };
@@ -432,7 +501,7 @@ async function demoApi(p){
     case 'config': return { processes: conf.processes };
     case 'submit': {
       const id = rid(), r = p.report;
-      for (const l of r.lines) rows.push({ id, date: r.date, shift: r.shift, worker: r.worker, process: l.process, part: l.part, qty: l.qty, ng: l.ng, hours: l.hours, note: r.note, createdAt: nowText(), key: p.key });
+      for (const l of r.lines) rows.push({ id, date: r.date, shift: r.shift, worker: r.worker, process: l.process, part: l.part, qty: l.qty, ng: l.ng, hours: l.hours, time: l.start && l.end ? l.start + '~' + l.end : '', note: r.note, createdAt: nowText(), key: p.key });
       save(rows); return { id };
     }
     case 'mine': return rows.filter(r => r.date === p.date && r.key === p.key).map(pub);
@@ -455,7 +524,6 @@ let admin = null;   // 로그인한 관리자 { name }
 let rows = [];
 let lineSeq = 0, pollT = null;
 
-(() => { const d = new Date(); $('#helloSub').textContent = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + '일월화수목금토'[d.getDay()] + '요일 · ' + SITE_NAME; })();
 $('#demoNotice').hidden = !DEMO;
 $('#noServer').hidden = DEMO || !!API_URL;
 $('#demoPanel').hidden = !DEMO;
@@ -464,7 +532,8 @@ $('#demoPanel').hidden = !DEMO;
 function show(view){
   const isAdmin = view === 'status' || view === 'settings';
   document.body.classList.toggle('is-admin', isAdmin);
-  $('#modeLabel').textContent = isAdmin ? '관리자 모드' : (view === 'login' ? '관리자 로그인' : '작업자 모드');
+  $('#modeLabel').textContent = isAdmin ? '관리자 모드' : (view === 'login' ? '관리자 로그인' : t('workerMode'));
+  $('#langBtn').hidden = view !== 'worker';
   $('#workerView').hidden = view !== 'worker';
   $('#loginView').hidden = view !== 'login';
   $('#statusView').hidden = view !== 'status';
@@ -533,12 +602,73 @@ $('#loginForm').addEventListener('submit', async e => {
 function procOptions(sel){
   const list = cfg.processes.slice();
   if (sel && !list.includes(sel)) list.push(sel);
-  return '<option value="">공정 선택</option>' + list.map(p => `<option${p === sel ? ' selected' : ''}>${esc(p)}</option>`).join('');
+  return `<option value="">${esc(t('pickProc'))}</option>` + list.map(p => `<option${p === sel ? ' selected' : ''}>${esc(p)}</option>`).join('');
+}
+// 작업시간: 직접 입력 (11:25, 1125, 11 → 11:25 / 11:25 / 11:00)
+const toMin = s => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+const fromMin = m => { m = ((m % 1440) + 1440) % 1440; return pad(Math.floor(m / 60)) + ':' + pad(m % 60); };
+function normTime(raw){
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  let h, m;
+  const c = s.match(/^(\d{1,2})\s*[:.시h]\s*(\d{1,2})?\s*분?$/);
+  if (c) { h = +c[1]; m = +(c[2] || 0); }
+  else if (/^\d{1,4}$/.test(s)) { const d = s.length <= 2 ? s.padStart(2, '0') + '00' : s.padStart(4, '0'); h = +d.slice(0, 2); m = +d.slice(2); }
+  else return null;
+  if (h > 24 || m > 59 || (h === 24 && m)) return null;
+  return fromMin(h * 60 + m);
+}
+// 종료가 시작보다 이르면 오후로 해석 (12:00~1:00 → 13:00). 그래도 이르면 다음 날(야간 22:00~02:00)
+function fixEnd(start, end){
+  if (!start || !end) return end;
+  const a = toMin(start), b = toMin(end);
+  if (b <= a && b < 720 && b + 720 > a) return fromMin(b + 720);
+  return end;
+}
+function spanHours(a, b){ if (!a || !b) return 0; let d = toMin(b) - toMin(a); if (d <= 0) d += 1440; return Math.round(d / 60 * 100) / 100; }
+function markEmpty(el){ el.querySelectorAll('select').forEach(s => s.classList.toggle('empty', !s.value)); }
+const NIGHT_CUT = 7 * 60;   // 야간조: 다음날 07:00 이전 작업은 전날(근무 시작일) 야간조 작업
+const curShift = () => document.querySelector('input[name=shift]:checked').value;
+// 주간조에서 1:00~6:59로 적으면 오후(13:00~18:59)로 해석
+function forShift(v){ return (v && curShift() === '주간' && toMin(v) < NIGHT_CUT) ? fromMin(toMin(v) + 720) : v; }
+function readTimes(el){
+  const id = el.dataset.id;
+  const s0 = normTime($('#l' + id + '-start').value), e0 = normTime($('#l' + id + '-end').value);
+  const s = s0 ? forShift(s0) : s0;
+  const e = e0 ? fixEnd(s, forShift(e0)) : e0;
+  return { start: s, end: e };
+}
+function tidyTimes(el){
+  const id = el.dataset.id, sIn = $('#l' + id + '-start'), eIn = $('#l' + id + '-end');
+  const { start, end } = readTimes(el);
+  if (start) sIn.value = start; sIn.classList.toggle('bad', start === null);
+  if (end) eIn.value = end; eIn.classList.toggle('bad', end === null);
+  return { start, end };
+}
+function nextDayLabel(){
+  const d = new Date($('#f-date').value + 'T00:00'); if (isNaN(d)) return '';
+  d.setDate(d.getDate() + 1); return t('dawn', { d: d.getDate() });
+}
+function updateDur(el){
+  const id = el.dataset.id, { start, end } = readTimes(el);
+  const h = spanHours(start, end);
+  let txt = h ? t('dur', { h: h }) : '';
+  if (curShift() === '야간' && start && toMin(start) < NIGHT_CUT) txt += (txt ? ' · ' : '') + nextDayLabel();
+  $('#l' + id + '-dur').textContent = txt;
+}
+// 새벽(07시 전)에 열면 전날 야간조로 자동 설정
+function yesterday(){ const d = new Date(); d.setDate(d.getDate() - 1); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function updateShiftNote(){
+  const note = $('#shiftNote');
+  if (curShift() !== '야간') { note.hidden = true; return; }
+  const d = new Date($('#f-date').value + 'T00:00');
+  note.textContent = isNaN(d) ? '' : t('nightRule', { d: d.getDate(), n: new Date(d.getTime() + 864e5).getDate() });
+  note.hidden = isNaN(d);
 }
 function renumber(){
   const items = [...$('#lines').children];
   items.forEach((el, i) => {
-    el.querySelector('.line-no').textContent = '작업 ' + (i + 1);
+    el.querySelector('.line-no').textContent = t('line', { n: i + 1 });
     el.querySelector('.rm').hidden = items.length === 1;
   });
 }
@@ -548,66 +678,105 @@ function addLine(){
   el.className = 'card line'; el.dataset.id = id;
   const last = [...$('#lines').children].pop();
   const prevProc = last ? $('#l' + last.dataset.id + '-process').value : (local.get('lastProc') || '');
+  // 앞 작업이 끝난 시각을 다음 작업의 시작으로 (11~12시, 12~1시처럼 이어서)
+  const prevEnd = last ? (normTime($('#l' + last.dataset.id + '-end').value) || '') : '';
   el.innerHTML = `
-    <div class="card-h"><h3 class="line-no"></h3><button type="button" class="linkish rm">빼기</button></div>
-    <label class="row" for="l${id}-process"><span class="k">공정</span><select id="l${id}-process">${procOptions(prevProc)}</select></label>
-    <label class="row" for="l${id}-part"><span class="k">품번</span><input id="l${id}-part" autocomplete="off" placeholder="예: 91210-AB010"></label>
-    <label class="row" for="l${id}-qty"><span class="k">생산수량</span><input id="l${id}-qty" type="number" inputmode="numeric" min="0" placeholder="0"><span class="u">개</span></label>
-    <label class="row" for="l${id}-ng"><span class="k">불량</span><input id="l${id}-ng" type="number" inputmode="numeric" min="0" placeholder="0"><span class="u">개</span></label>
-    <label class="row" for="l${id}-hours"><span class="k">작업시간</span><input id="l${id}-hours" type="number" inputmode="decimal" min="0" step="0.5" placeholder="0"><span class="u">시간</span></label>`;
+    <div class="card-h"><h3 class="line-no"></h3><button type="button" class="linkish rm" data-i18n="remove">${esc(t('remove'))}</button></div>
+    <label class="row" for="l${id}-process"><span class="k" data-i18n="process">${esc(t('process'))}</span><select id="l${id}-process">${procOptions(prevProc)}</select></label>
+    <div class="row time-row"><span class="k"><span data-i18n="time">${esc(t('time'))}</span><small class="dur" id="l${id}-dur"></small></span>
+      <div class="trange">
+        <input id="l${id}-start" class="tin" inputmode="numeric" maxlength="5" autocomplete="off" value="${esc(prevEnd)}" placeholder="${esc(t('start'))}" data-i18n-ph="start" aria-label="${esc(t('start'))}">
+        <span class="tilde">~</span>
+        <input id="l${id}-end" class="tin" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="${esc(t('end'))}" data-i18n-ph="end" aria-label="${esc(t('end'))}">
+      </div>
+    </div>
+    <label class="row" for="l${id}-part"><span class="k" data-i18n="part">${esc(t('part'))}</span><input id="l${id}-part" autocomplete="off" placeholder="${esc(t('partPh'))}" data-i18n-ph="partPh"></label>
+    <label class="row" for="l${id}-qty"><span class="k" data-i18n="qty">${esc(t('qty'))}</span><input id="l${id}-qty" class="numin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><span class="u" data-i18n="ea">${esc(t('ea'))}</span></label>
+    <label class="row" for="l${id}-ng"><span class="k" data-i18n="ng">${esc(t('ng'))}</span><input id="l${id}-ng" class="numin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><span class="u" data-i18n="ea">${esc(t('ea'))}</span></label>`;
   el.querySelector('.rm').addEventListener('click', () => { el.remove(); renumber(); });
-  const sel = el.querySelector('select');
-  const mark = () => sel.classList.toggle('empty', !sel.value);
-  sel.addEventListener('change', mark); mark();
+  // 칸을 벗어나면 11:25 형태로 정리하고 작업시간 계산
+  el.querySelectorAll('.tin').forEach(inp => {
+    inp.addEventListener('blur', () => { tidyTimes(el); updateDur(el); });
+    inp.addEventListener('input', () => { inp.classList.remove('bad'); updateDur(el); });
+  });
+  el.querySelectorAll('.numin').forEach(inp => inp.addEventListener('input', () => { const v = inp.value.replace(/[^0-9]/g, ''); if (v !== inp.value) inp.value = v; }));
+  el.addEventListener('change', () => markEmpty(el));
   $('#lines').appendChild(el);
+  markEmpty(el); updateDur(el);
   renumber();
 }
 function refreshLists(){
-  document.querySelectorAll('#lines select').forEach(s => { const v = s.value; s.innerHTML = procOptions(v); s.classList.toggle('empty', !s.value); });
+  document.querySelectorAll('#lines select[id$="-process"]').forEach(s => { const v = s.value; s.innerHTML = procOptions(v); });
+  document.querySelectorAll('#lines .tin').forEach(s => s.setAttribute('aria-label', s.placeholder));
+  document.querySelectorAll('#lines .line').forEach(el => { markEmpty(el); updateDur(el); });
   const ap = $('#a-proc'), av = ap.value;
   ap.innerHTML = '<option value="">전체 공정</option>' + cfg.processes.map(p => `<option${p === av ? ' selected' : ''}>${esc(p)}</option>`).join('');
 }
 
-$('#f-date').value = today();
+/* 언어 적용 */
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  const lb = $('#langBtn'); lb.textContent = lang === 'ko' ? 'ភាសាខ្មែរ' : '한국어'; lb.lang = lang === 'ko' ? 'km' : 'ko';
+  const d = new Date(); $('#helloSub').textContent = t('dateFmt')(d) + ' · ' + SITE_NAME;
+  if (!document.body.classList.contains('is-admin') && $('#loginView').hidden) $('#modeLabel').textContent = t('workerMode');
+  refreshLists(); renumber(); updateShiftNote();
+  if (!$('#mineWrap').hidden) loadMine();
+}
+$('#langBtn').addEventListener('click', () => { lang = lang === 'ko' ? 'km' : 'ko'; local.set('lang', lang); applyLang(); });
+
+// 작업일자 = 근무 시작일. 07시 전에 열면 전날 야간조로
+let autoNight = false;
+if (new Date().getHours() * 60 + new Date().getMinutes() < NIGHT_CUT) {
+  $('#f-date').value = yesterday(); $('#s-night').checked = true; autoNight = true;
+} else $('#f-date').value = today();
 $('#f-worker').value = local.get('workerName') || '';
 addLine();
 $('#addLine').addEventListener('click', addLine);
+const onShiftOrDate = () => { updateShiftNote(); document.querySelectorAll('#lines .line').forEach(updateDur); };
+document.querySelectorAll('input[name=shift]').forEach(r => r.addEventListener('change', onShiftOrDate));
+$('#f-date').addEventListener('change', onShiftOrDate);
 
 $('#reportForm').addEventListener('submit', async e => {
   e.preventDefault();
   const worker = $('#f-worker').value.trim();
   const date = $('#f-date').value;
-  const shift = document.querySelector('input[name=shift]:checked').value;
-  if (!worker) { toast('작업자 이름을 입력하세요'); $('#f-worker').focus(); return; }
-  if (!date) { toast('작업일자를 선택하세요'); return; }
+  const shift = curShift();
+  if (!worker) { toast(t('needName')); $('#f-worker').focus(); return; }
+  if (!date) { toast(t('needDate')); return; }
   const lines = [];
   const els = [...$('#lines').children];
   for (const el of els) {
-    const id = el.dataset.id;
+    const id = el.dataset.id, no = els.indexOf(el) + 1;
+    const tm = tidyTimes(el);
     const l = {
       process: $('#l' + id + '-process').value,
       part: $('#l' + id + '-part').value.trim(),
       qty: n($('#l' + id + '-qty').value),
       ng: n($('#l' + id + '-ng').value),
-      hours: n($('#l' + id + '-hours').value)
+      start: tm.start || '', end: tm.end || '',
+      hours: spanHours(tm.start, tm.end)
     };
     if (!l.qty && !l.ng) continue;
-    if (!l.process) { toast('작업 ' + (els.indexOf(el) + 1) + '의 공정을 선택하세요'); return; }
+    if (!l.process) { toast(t('needProc', { n: no })); return; }
+    if (tm.start === null || tm.end === null) { toast(t('needTimeFmt', { n: no })); return; }
+    if (!!l.start !== !!l.end) { toast(t('needTime', { n: no })); return; }
     lines.push(l);
   }
-  if (!lines.length) { toast('생산수량을 하나 이상 입력하세요'); return; }
-  const btn = $('#submitBtn'); btn.disabled = true; btn.textContent = '제출하는 중…';
+  if (!lines.length) { toast(t('needQty')); return; }
+  const btn = $('#submitBtn'); btn.disabled = true; btn.textContent = t('submitting');
   try {
     await api('submit', { key: deviceKey, report: { date, shift, worker, lines, note: $('#f-note').value.trim() } });
     local.set('workerName', worker); local.set('lastProc', lines[lines.length - 1].process);
     $('#lines').innerHTML = ''; addLine(); $('#f-note').value = '';
-    const dm = $('#doneMsg'); dm.textContent = worker + '님, 실적이 제출됐어요 (' + nowText().slice(11) + ')'; dm.hidden = false;
+    const dm = $('#doneMsg'); dm.textContent = t('done', { name: worker, t: nowText().slice(11) }); dm.hidden = false;
     clearTimeout(dm._t); dm._t = setTimeout(() => dm.hidden = true, 6000);
-    toast('실적을 제출했습니다');
+    toast(t('sent'));
     loadMine();
   } catch (err) {
     toast(errText(err));
-  } finally { btn.disabled = false; btn.textContent = '실적 제출'; }
+  } finally { btn.disabled = false; btn.textContent = t('submit'); }
 });
 
 async function loadMine(){
@@ -623,11 +792,13 @@ async function loadMine(){
   for (const [id, g] of groups) {
     const qty = g.reduce((a, r) => a + r.qty, 0);
     const row = document.createElement('div'); row.className = 'mine-item';
-    row.innerHTML = `<div><div>${esc(g[0].worker)} · ${esc(g[0].shift)} · ${g.map(r => esc(r.process)).join(', ')}</div><div class="sub num">생산 ${fmt(qty)} · ${esc(String(g[0].createdAt).slice(11, 16))} 제출</div></div>`;
-    const del = document.createElement('button'); del.type = 'button'; del.className = 'btn small danger'; del.textContent = '삭제';
+    const shiftTxt = g[0].shift === '야간' ? t('night') : t('day');
+    const times = g.map(r => r.time).filter(Boolean).join(', ');
+    row.innerHTML = `<div><div>${esc(g[0].worker)} · ${esc(shiftTxt)} · ${g.map(r => esc(r.process)).join(', ')}</div><div class="sub num">${esc(times ? times + ' · ' : '')}${esc(t('mineSub', { q: fmt(qty), t: String(g[0].createdAt).slice(11, 16) }))}</div></div>`;
+    const del = document.createElement('button'); del.type = 'button'; del.className = 'btn small danger'; del.textContent = t('del');
     del.addEventListener('click', async () => {
-      if (del.dataset.arm !== '1') { del.dataset.arm = '1'; del.textContent = '정말 삭제'; return; }
-      try { await api('removeMine', { id, key: deviceKey }); toast('삭제했습니다'); loadMine(); } catch(e) { toast(errText(e)); }
+      if (del.dataset.arm !== '1') { del.dataset.arm = '1'; del.textContent = t('delSure'); return; }
+      try { await api('removeMine', { id, key: deviceKey }); toast(t('deleted')); loadMine(); } catch(e) { toast(errText(e)); }
     });
     row.appendChild(del); box.appendChild(row);
   }
@@ -651,10 +822,25 @@ $('#a-shift').addEventListener('change', renderAdmin);
 $('#a-proc').addEventListener('change', renderAdmin);
 $('#refresh').addEventListener('click', () => loadAdmin());
 
+// 사번 명단: "1023 김철수" → 1023의 이름 김철수
+function roster(){
+  return cfg.workers.map(line => { const m = String(line).trim().match(/^(\S+)\s*(.*)$/); return m ? { id: m[1], name: m[2].trim() } : null; }).filter(Boolean);
+}
+function whoOf(id){ const r = roster().find(x => x.id === id); return r && r.name ? id + ' ' + r.name : id; }
+// 야간조 새벽(07시 전) 작업은 '익일'로 표시하고, 정렬할 때도 그날 밤 뒤로 보냄
+function timeText(r){
+  if (!r.time) return '';
+  const s = r.time.split('~')[0];
+  return (r.shift === '야간' && s && toMin(s) < NIGHT_CUT ? '익일 ' : '') + r.time;
+}
+function timeKey(r){
+  const s = (r.time || '').split('~')[0]; if (!s) return 9999;
+  const m = toMin(s); return r.shift === '야간' && m < NIGHT_CUT ? m + 1440 : m;
+}
 function flatRows(){
   const sf = $('#a-shift').value, pf = $('#a-proc').value;
   return rows.filter(r => (!sf || r.shift === sf) && (!pf || r.process === pf))
-             .slice().sort((a, b) => (a.date + a.worker).localeCompare(b.date + b.worker, 'ko'));
+             .slice().sort((a, b) => a.date.localeCompare(b.date) || a.shift.localeCompare(b.shift, 'ko') || String(a.worker).localeCompare(String(b.worker), 'ko') || timeKey(a) - timeKey(b));
 }
 
 function renderAdmin(){
@@ -671,7 +857,7 @@ function renderAdmin(){
   if (cfg.workers.length && $('#a-from').value === $('#a-to').value) {
     const sf = $('#a-shift').value;
     const submitted = new Set(rows.filter(r => !sf || r.shift === sf).map(r => r.worker));
-    const miss = cfg.workers.filter(w => !submitted.has(w));
+    const miss = roster().filter(w => !submitted.has(w.id)).map(w => w.name ? w.id + ' ' + w.name : w.id);
     m.innerHTML = miss.length ? `<div class="missing">미제출 ${miss.length}명: ${miss.map(esc).join(', ')}</div>` : `<div class="missing ok">명단의 모든 작업자가 제출했습니다</div>`;
   } else m.innerHTML = '';
 
@@ -697,9 +883,9 @@ function renderAdmin(){
           <div class="proc-stats"><span>생산 <b>${fmt(pq)}</b></span><span>불량 <b class="ngv">${fmt(pn)}</b></span><span>불량률 <b>${pct(pn, pq)}</b></span><span>UPH <b>${ph ? fmt(pq / ph) : '–'}</b></span><span>인원 <b>${ws.length}</b></span></div>
         </div>
         <div class="tbl-wrap"><table>
-          <thead><tr><th>작업자</th><th class="barcell"></th><th class="r">생산</th><th class="r">불량</th><th class="r">시간</th><th class="r">UPH</th><th>품번</th></tr></thead>
+          <thead><tr><th>사번</th><th class="barcell"></th><th class="r">생산</th><th class="r">불량</th><th class="r">시간</th><th class="r">UPH</th><th>품번</th></tr></thead>
           <tbody>${ws.map(([name, a]) => `<tr>
-            <td>${esc(name)}${a.example ? '<span class="pill">예시</span>' : ''}</td>
+            <td>${esc(whoOf(name))}${a.example ? '<span class="pill">예시</span>' : ''}</td>
             <td class="barcell"><div class="bar"><i style="width:${(a.qty / max * 100).toFixed(1)}%"></i></div></td>
             <td class="r num">${fmt(a.qty)}</td>
             <td class="r num ${a.ng ? 'ngtxt' : 'muted'}">${fmt(a.ng)}</td>
@@ -710,11 +896,12 @@ function renderAdmin(){
     }).join('');
   }
 
-  const t = $('#rawTbl');
-  if (!list.length) { t.innerHTML = '<tbody><tr><td class="muted">표시할 기록이 없습니다</td></tr></tbody>'; return; }
-  t.innerHTML = `<thead><tr><th>날짜</th><th>조</th><th>작업자</th><th>공정</th><th>품번</th><th class="r">생산</th><th class="r">불량</th><th class="r">시간</th><th>특이사항</th><th>제출</th><th></th></tr></thead>
+  const tbl = $('#rawTbl');
+  if (!list.length) { tbl.innerHTML = '<tbody><tr><td class="muted">표시할 기록이 없습니다</td></tr></tbody>'; return; }
+  tbl.innerHTML = `<thead><tr><th>날짜</th><th>조</th><th>사번</th><th>작업시간</th><th>공정</th><th>품번</th><th class="r">생산</th><th class="r">불량</th><th class="r">시간</th><th>특이사항</th><th>제출</th><th></th></tr></thead>
     <tbody>${list.map(r => `<tr>
-      <td class="num">${esc(r.date.slice(5))}</td><td>${esc(r.shift)}</td><td>${esc(r.worker)}${r.example ? '<span class="pill">예시</span>' : ''}</td>
+      <td class="num">${esc(r.date.slice(5))}</td><td>${esc(r.shift)}</td><td>${esc(whoOf(r.worker))}${r.example ? '<span class="pill">예시</span>' : ''}</td>
+      <td class="num">${esc(timeText(r)) || '<span class="muted">–</span>'}</td>
       <td>${esc(r.process)}</td><td class="muted">${esc(r.part) || '–'}</td>
       <td class="r num">${fmt(r.qty)}</td><td class="r num ${r.ng ? 'ngtxt' : 'muted'}">${fmt(r.ng)}</td><td class="r num">${r.hours || '–'}</td>
       <td class="muted">${esc(r.note)}</td><td class="num muted">${esc(String(r.createdAt).slice(11, 16))}</td>
@@ -727,8 +914,8 @@ $('#rawTbl').addEventListener('click', async e => {
   try { await adminApi('remove', { id: b.dataset.del }); toast('실적 한 건을 삭제했습니다'); loadAdmin(); } catch(err) { toast(errText(err)); }
 });
 
-const HEAD = ['날짜','근무조','작업자','공정','품번','생산수량','불량수량','작업시간','특이사항','제출시각'];
-const rowVals = r => [r.date, r.shift, r.worker, r.process, r.part, r.qty, r.ng, r.hours, r.note, r.createdAt];
+const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','품번','생산수량','불량수량','작업시간(h)','특이사항','제출시각'];
+const rowVals = r => { const w = roster().find(x => x.id === r.worker); return [r.date, r.shift, r.worker, w ? w.name : '', timeText(r), r.process, r.part, r.qty, r.ng, r.hours, r.note, r.createdAt]; };
 $('#copyTsv').addEventListener('click', async () => {
   const list = flatRows(); if (!list.length) { toast('복사할 기록이 없습니다'); return; }
   const tsv = [HEAD, ...list.map(rowVals)].map(a => a.map(v => String(v ?? '').replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
@@ -764,7 +951,9 @@ $('#clearDemo').addEventListener('click', () => {
 });
 
 /* ---------- 시작 ---------- */
+applyLang();
 show('worker');
+if (autoNight) toast(t('autoNight', { d: new Date($('#f-date').value + 'T00:00').getDate() }));
 if (DEMO || API_URL) {
   api('config').then(c => { if (c && c.processes && c.processes.length) { cfg.processes = c.processes.slice(); refreshLists(); } }).catch(() => {});
   loadMine();
