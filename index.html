@@ -539,7 +539,7 @@ function show(view){
   $('#statusView').hidden = view !== 'status';
   $('#settingsView').hidden = view !== 'settings';
   $('#adminTabs').hidden = !isAdmin;
-  $('#toAdmin').hidden = view !== 'worker';
+  $('#toAdmin').hidden = true;   // 작업자 화면에는 관리자 버튼을 보이지 않음 (#admin 주소나 제목 5번 누르기로 진입)
   $('#logout').hidden = !isAdmin;
   $('#who').hidden = !isAdmin;
   $('#who').textContent = admin ? admin.name + ' 님' : '';
@@ -552,8 +552,19 @@ function show(view){
   window.scrollTo(0, 0);
 }
 document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
-$('#toAdmin').addEventListener('click', () => admin ? show('status') : show('login'));
+const openAdmin = () => admin ? show('status') : show('login');
+$('#toAdmin').addEventListener('click', openAdmin);
 $('#backToWorker').addEventListener('click', () => show('worker'));
+// 숨은 입구: 제목 '작업일보'를 2초 안에 5번 누르기
+(() => {
+  let taps = [];
+  document.querySelector('.band h1').addEventListener('click', () => {
+    const now = Date.now(); taps = taps.filter(x => now - x < 2000); taps.push(now);
+    if (taps.length >= 5 && !$('#workerView').hidden) { taps = []; openAdmin(); }
+  });
+})();
+// 주소 끝을 #admin으로 바꾸면 관리자 화면으로
+window.addEventListener('hashchange', () => { if (location.hash === '#admin' && !$('#workerView').hidden) openAdmin(); });
 
 /* ---------- 관리자 로그인 / 로그아웃 ---------- */
 function loadAuth(){
