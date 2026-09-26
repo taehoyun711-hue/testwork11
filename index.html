@@ -725,7 +725,7 @@ function applyLang(){
   });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   const lb = $('#langBtn'); lb.textContent = lang === 'ko' ? 'ភាសាខ្មែរ' : '한국어'; lb.lang = lang === 'ko' ? 'km' : 'ko';
-  const d = new Date(); $('#helloSub').textContent = t('dateFmt')(d) + ' · ' + SITE_NAME;
+  const d = new Date(); $('#helloSub').textContent = t('dateFmt')(d);
   refreshLists(); renumber(); updateShiftNote();
   if (!$('#mineWrap').hidden) loadMine();
 }
