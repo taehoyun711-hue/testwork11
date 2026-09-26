@@ -92,7 +92,9 @@ body.is-admin .mode{background:var(--badge);color:var(--badge-ink);font-weight:7
 .card-h h3{margin:0;font-size:17px;font-weight:700}
 .row{display:flex;align-items:center;gap:12px;min-height:60px;border-bottom:1px solid var(--line);cursor:text}
 .row:last-child{border-bottom:0}
-.row .k{flex:none;width:76px;font-size:15px;color:var(--ink-2)}
+.row .k{flex:none;width:auto;min-width:76px;max-width:46%;font-size:15px;color:var(--ink-2);line-height:1.3}
+/* 한국어 항목 이름 아래 크메르어 */
+.k-sub{display:block;margin-top:2px;font-family:"Kantumruy Pro",var(--sans);font-size:12.5px;font-weight:400;color:var(--ink-3);line-height:1.45;letter-spacing:0}
 .row input,.row select{flex:1;min-width:0;font:inherit;font-size:17px;font-weight:600;color:var(--ink);background:transparent;border:0;padding:12px 0;text-align:right;min-height:48px;border-radius:0}
 .row input::placeholder,.row textarea::placeholder{color:var(--ink-3);font-weight:400;opacity:.8}
 .row input:focus-visible,.row select:focus-visible,.row textarea:focus-visible{outline:0}
@@ -265,9 +267,9 @@ tr:last-child td{border-bottom:0}
 
     <form id="reportForm" class="stack" novalidate>
       <div class="card">
-        <label class="row" for="f-worker"><span class="k" data-i18n="name">사번</span><input id="f-worker" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="사번 입력" data-i18n-ph="namePh" maxlength="30"></label>
-        <label class="row" for="f-date"><span class="k" data-i18n="date">날짜</span><input type="date" id="f-date"></label>
-        <div class="row"><span class="k" id="shiftLab" data-i18n="shift">근무</span>
+        <label class="row" for="f-worker"><span class="k" data-i18n="name" data-sub>사번</span><input id="f-worker" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="사번 입력" data-i18n-ph="namePh" maxlength="30"></label>
+        <label class="row" for="f-date"><span class="k" data-i18n="date" data-sub>날짜</span><input type="date" id="f-date"></label>
+        <div class="row"><span class="k" id="shiftLab" data-i18n="shift" data-sub>근무</span>
           <div class="seg" role="radiogroup" aria-labelledby="shiftLab">
             <label><input type="radio" name="shift" id="s-day" value="주간" checked><span data-i18n="day">주간</span></label>
             <label><input type="radio" name="shift" id="s-night" value="야간"><span data-i18n="night">야간</span></label>
@@ -280,7 +282,7 @@ tr:last-child td{border-bottom:0}
       <button type="button" class="add-btn" id="addLine" data-i18n="addLine">＋ 다른 공정·품번 추가</button>
 
       <div class="card">
-        <label class="row col" for="f-note"><span class="k" data-i18n="note">특이사항</span><textarea id="f-note" placeholder="설비 고장, 자재 대기 등 (없으면 비워두세요)" data-i18n-ph="notePh"></textarea></label>
+        <label class="row col" for="f-note"><span class="k" data-i18n="note" data-sub>특이사항</span><textarea id="f-note" placeholder="설비 고장, 자재 대기 등 (없으면 비워두세요)" data-i18n-ph="notePh"></textarea></label>
       </div>
 
       <div class="done" id="doneMsg" role="status" hidden></div>
@@ -405,7 +407,7 @@ const adminApi = (action, payload) => api(action, payload, true).catch(e => {
 const I18N = {
   ko: {
     admin: '관리자', workerMode: '작업자 모드', title: '실적 입력',
-    name: '사번', namePh: '사번 입력', date: '날짜', shift: '근무', day: '주간', night: '야간',
+    name: '사번', namePh: '사번 입력 · បញ្ចូលអាយឌី', date: '날짜', shift: '근무', day: '주간', night: '야간',
     addLine: '＋ 다른 공정·품번 추가', note: '특이사항', notePh: '설비 고장, 자재 대기 등 (없으면 비워두세요)',
     submit: '실적 제출', submitting: '제출하는 중…',
     mineTitle: '제출 내역', mineHint: '이 휴대폰에서 낸 실적이에요. 잘못 적었으면 삭제하고 다시 제출하세요.',
@@ -425,18 +427,18 @@ const I18N = {
   },
   km: {
     admin: 'អ្នកគ្រប់គ្រង', workerMode: 'សម្រាប់កម្មករ', title: 'បញ្ចូលលទ្ធផលការងារ',
-    name: 'លេខបុគ្គលិក', namePh: 'បញ្ចូលលេខបុគ្គលិក', date: 'កាលបរិច្ឆេទ', shift: 'វេន', day: 'វេនថ្ងៃ', night: 'វេនយប់',
+    name: 'អាយឌី', namePh: 'បញ្ចូលអាយឌី', date: 'កាលបរិច្ឆេទ', shift: 'វេន', day: 'វេនថ្ងៃ', night: 'វេនយប់',
     addLine: '＋ បន្ថែមការងារផ្សេងទៀត', note: 'កំណត់សម្គាល់', notePh: 'ម៉ាស៊ីនខូច រង់ចាំសម្ភារៈ ។ល។ (ទុកទទេ បើគ្មាន)',
     submit: 'ដាក់ស្នើលទ្ធផល', submitting: 'កំពុងដាក់ស្នើ…',
     mineTitle: 'ប្រវត្តិដាក់ស្នើ', mineHint: 'នេះជាលទ្ធផលដែលបានដាក់ស្នើពីទូរស័ព្ទនេះ។ បើសរសេរខុស សូមលុប ហើយដាក់ស្នើម្ដងទៀត។',
     noServer: 'មិនទាន់ភ្ជាប់ម៉ាស៊ីនមេនៅឡើយ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។',
-    line: 'ការងារទី {n}', remove: 'ដកចេញ', process: 'ដំណើរការ', pickProc: 'ជ្រើសរើសដំណើរការ', part: 'លេខកូដ', partPh: 'ឧ. 91210-AB010',
-    qty: 'ចំនួនផលិត', ng: 'ខូច', ea: 'គ្រឿង', time: 'ម៉ោងធ្វើការ', start: 'ចាប់ផ្ដើម', end: 'បញ្ចប់', dur: '{m} នាទី',
+    line: 'ការងារទី {n}', remove: 'ដកចេញ', process: 'ផ្នែក', pickProc: 'ជ្រើសរើសផ្នែក', part: 'លេខ P/N', partPh: 'ឧ. 91210-AB010',
+    qty: 'ចំនួនផលិត', ng: 'ចំនួនខូច', ea: 'គ្រឿង', time: 'ម៉ោងធ្វើការ', start: 'ចាប់ផ្ដើម', end: 'បញ្ចប់', dur: '{m} នាទី',
     nightRule: 'វេនយប់៖ ការងាររហូតដល់មុនម៉ោង 07:00 ថ្ងៃទី {n} ត្រូវកត់ត្រាជាការងារថ្ងៃទី {d}',
     autoNight: 'ដោយសារមុនម៉ោង 07:00 បានកំណត់ជាការងារវេនយប់ ថ្ងៃទី {d}', needTimeFmt: 'សូមសរសេរម៉ោងសម្រាប់ការងារទី {n} ដូចជា 11:25',
-    needName: 'សូមបញ្ចូលលេខបុគ្គលិក', needDate: 'សូមជ្រើសរើសកាលបរិច្ឆេទ', needProc: 'សូមជ្រើសរើសដំណើរការ សម្រាប់ការងារទី {n}',
+    needName: 'សូមបញ្ចូលអាយឌី', needDate: 'សូមជ្រើសរើសកាលបរិច្ឆេទ', needProc: 'សូមជ្រើសរើសផ្នែក សម្រាប់ការងារទី {n}',
     needTime: 'សូមជ្រើសរើសម៉ោងចាប់ផ្ដើម និងម៉ោងបញ្ចប់ សម្រាប់ការងារទី {n}', needQty: 'សូមបញ្ចូលចំនួនផលិតយ៉ាងហោចណាស់មួយ',
-    done: 'លេខបុគ្គលិក {name} បានដាក់ស្នើលទ្ធផលរួចរាល់ ({t})', sent: 'បានដាក់ស្នើរួចរាល់',
+    done: 'អាយឌី {name} បានដាក់ស្នើលទ្ធផលរួចរាល់ ({t})', sent: 'បានដាក់ស្នើរួចរាល់',
     del: 'លុប', delSure: 'ពិតជាលុប?', deleted: 'បានលុបរួចរាល់', mineSub: 'ផលិត {q} · ដាក់ស្នើម៉ោង {t}',
     dateFmt: d => 'ថ្ងៃ' + ['អាទិត្យ', 'ច័ន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ៍', 'សុក្រ', 'សៅរ៍'][d.getDay()] + ' ' + d.getDate() + '/' + (d.getMonth() + 1),
     err_network: 'សូមពិនិត្យអ៊ីនធឺណិត ហើយព្យាយាមម្ដងទៀត', err_forbidden: 'លទ្ធផលពីទូរស័ព្ទផ្សេង មានតែអ្នកគ្រប់គ្រងទេដែលអាចលុបបាន',
@@ -450,6 +452,11 @@ function t(key, vars){
   let s = I18N[lang][key] ?? I18N.ko[key] ?? key;
   if (vars) for (const k in vars) s = s.replace('{' + k + '}', vars[k]);
   return s;
+}
+// 입력 항목 이름: 한국어 화면에서는 아래에 크메르어를 작게 함께 표시
+function lbl(key){
+  const main = esc(t(key));
+  return lang === 'ko' && I18N.km[key] ? main + `<small class="k-sub" lang="km">${esc(I18N.km[key])}</small>` : main;
 }
 function errText(e){
   const c = e && e.code;
@@ -679,17 +686,17 @@ function addLine(){
   const prevEnd = last ? (normTime($('#l' + last.dataset.id + '-end').value) || '') : '';
   el.innerHTML = `
     <div class="card-h"><h3 class="line-no"></h3><button type="button" class="linkish rm" data-i18n="remove">${esc(t('remove'))}</button></div>
-    <label class="row" for="l${id}-process"><span class="k" data-i18n="process">${esc(t('process'))}</span><select id="l${id}-process">${procOptions(prevProc)}</select></label>
-    <div class="row time-row"><span class="k"><span data-i18n="time">${esc(t('time'))}</span><small class="dur" id="l${id}-dur"></small></span>
+    <label class="row" for="l${id}-process"><span class="k" data-i18n="process" data-sub>${lbl('process')}</span><select id="l${id}-process">${procOptions(prevProc)}</select></label>
+    <div class="row time-row"><span class="k"><span data-i18n="time" data-sub>${lbl('time')}</span><small class="dur" id="l${id}-dur"></small></span>
       <div class="trange">
         <input id="l${id}-start" class="tin" inputmode="numeric" maxlength="5" autocomplete="off" value="${esc(prevEnd)}" placeholder="${esc(t('start'))}" data-i18n-ph="start" aria-label="${esc(t('start'))}">
         <span class="tilde">~</span>
         <input id="l${id}-end" class="tin" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="${esc(t('end'))}" data-i18n-ph="end" aria-label="${esc(t('end'))}">
       </div>
     </div>
-    <label class="row" for="l${id}-part"><span class="k" data-i18n="part">${esc(t('part'))}</span><input id="l${id}-part" autocomplete="off" placeholder="${esc(t('partPh'))}" data-i18n-ph="partPh"></label>
-    <label class="row" for="l${id}-qty"><span class="k" data-i18n="qty">${esc(t('qty'))}</span><input id="l${id}-qty" class="numin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><span class="u" data-i18n="ea">${esc(t('ea'))}</span></label>
-    <label class="row" for="l${id}-ng"><span class="k" data-i18n="ng">${esc(t('ng'))}</span><input id="l${id}-ng" class="numin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><span class="u" data-i18n="ea">${esc(t('ea'))}</span></label>`;
+    <label class="row" for="l${id}-part"><span class="k" data-i18n="part" data-sub>${lbl('part')}</span><input id="l${id}-part" autocomplete="off" placeholder="${esc(t('partPh'))}" data-i18n-ph="partPh"></label>
+    <label class="row" for="l${id}-qty"><span class="k" data-i18n="qty" data-sub>${lbl('qty')}</span><input id="l${id}-qty" class="numin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><span class="u" data-i18n="ea">${esc(t('ea'))}</span></label>
+    <label class="row" for="l${id}-ng"><span class="k" data-i18n="ng" data-sub>${lbl('ng')}</span><input id="l${id}-ng" class="numin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><span class="u" data-i18n="ea">${esc(t('ea'))}</span></label>`;
   el.querySelector('.rm').addEventListener('click', () => { el.remove(); renumber(); });
   // 칸을 벗어나면 11:25 형태로 정리하고 작업시간 계산
   el.querySelectorAll('.tin').forEach(inp => {
@@ -713,7 +720,9 @@ function refreshLists(){
 /* 언어 적용 */
 function applyLang(){
   document.documentElement.lang = lang;
-  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    if (el.hasAttribute('data-sub')) el.innerHTML = lbl(el.dataset.i18n); else el.textContent = t(el.dataset.i18n);
+  });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   const lb = $('#langBtn'); lb.textContent = lang === 'ko' ? 'ភាសាខ្មែរ' : '한국어'; lb.lang = lang === 'ko' ? 'km' : 'ko';
   const d = new Date(); $('#helloSub').textContent = t('dateFmt')(d) + ' · ' + SITE_NAME;
