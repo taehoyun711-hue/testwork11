@@ -987,6 +987,9 @@ $('#rawTbl').addEventListener('click', async e => {
 // 엑셀·CSV 제목 줄은 구글 시트와 맞춰 한국어로 고정
 const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','호기명','선번','LOT','생산수량','불량수량','작업시간(분)','특이사항(비가동 사유)','제출시각'];
 const rowVals = r => { const w = roster().find(x => x.id === r.worker); return [r.date, r.shift, r.worker, w ? w.name : '', timeText(r), r.process, r.machine || '', r.wire || '', r.lot || '', r.qty, r.ng, minsOf(r), r.note, r.createdAt]; };
+// CSV 저장 순서: 사번, 호기, 주/야, 작업시간(분), 생산수량 먼저, 나머지는 뒤에
+const CSV_HEAD = ['사번','호기','주/야','작업시간','생산수량','날짜','이름','공정','선번','LOT','불량수량','특이사항(비가동 사유)','제출시각'];
+const csvVals = r => { const w = roster().find(x => x.id === r.worker); return [r.worker, r.machine || '', r.shift, minsOf(r), r.qty, r.date, w ? w.name : '', r.process, r.wire || '', r.lot || '', r.ng, r.note, r.createdAt]; };
 $('#copyTsv').addEventListener('click', async () => {
   const list = flatRows(); if (!list.length) { toast(t('noCopy')); return; }
   const tsv = [HEAD, ...list.map(rowVals)].map(a => a.map(v => String(v ?? '').replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
@@ -1000,7 +1003,7 @@ $('#copyTsv').addEventListener('click', async () => {
 $('#saveCsv').addEventListener('click', () => {
   const list = flatRows(); if (!list.length) { toast(t('noSave')); return; }
   const q = v => { const s = String(v ?? ''); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
-  const csv = '﻿' + [HEAD, ...list.map(rowVals)].map(a => a.map(q).join(',')).join('\r\n');
+  const csv = '﻿' + [CSV_HEAD, ...list.map(csvVals)].map(a => a.map(q).join(',')).join('\r\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
   const a = document.createElement('a'); a.href = url; a.download = `작업일보_${$('#a-from').value}_${$('#a-to').value}.csv`;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
