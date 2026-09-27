@@ -242,14 +242,14 @@ tr:last-child td{border-bottom:0}
         <span class="who" id="who" hidden></span>
         <button type="button" class="band-btn lang-btn" id="langBtn" lang="km">ភាសាខ្មែរ</button>
         <button type="button" class="band-btn" id="toAdmin" data-i18n="admin">관리자</button>
-        <button type="button" class="band-btn" id="logout" hidden>로그아웃</button>
+        <button type="button" class="band-btn" id="logout" data-i18n="logout" hidden>로그아웃</button>
       </div>
     </div>
   </div>
   <nav class="tabs" id="adminTabs" hidden>
     <div class="tabs-in" role="tablist">
-      <button class="tab" role="tab" id="t-status" data-tab="status" aria-selected="true">공정별 현황</button>
-      <button class="tab" role="tab" id="t-settings" data-tab="settings" aria-selected="false">설정</button>
+      <button class="tab" role="tab" id="t-status" data-tab="status" aria-selected="true" data-i18n="tabStatus">공정별 현황</button>
+      <button class="tab" role="tab" id="t-settings" data-tab="settings" aria-selected="false" data-i18n="tabSettings">설정</button>
     </div>
   </nav>
 </header>
@@ -279,7 +279,7 @@ tr:last-child td{border-bottom:0}
       </div>
 
       <div class="lines" id="lines"></div>
-      <button type="button" class="add-btn" id="addLine" data-i18n="addLine">＋ 다른 공정·품번 추가</button>
+      <button type="button" class="add-btn" id="addLine" data-i18n="addLine">＋ 다른 공정 추가</button>
 
       <div class="card">
         <label class="row col" for="f-note"><span class="k" data-i18n="note" data-sub>특이사항</span><textarea id="f-note" placeholder="설비 고장, 자재 대기 등 (없으면 비워두세요)" data-i18n-ph="notePh"></textarea></label>
@@ -300,14 +300,14 @@ tr:last-child td{border-bottom:0}
   <section id="loginView" hidden>
     <div class="login">
       <form class="card login-card" id="loginForm" novalidate>
-        <h2>관리자 로그인</h2>
-        <p class="sub">실적 현황은 관리자만 볼 수 있어요</p>
-        <label class="row" for="lg-id"><span class="k">아이디</span><input id="lg-id" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="아이디"></label>
-        <label class="row" for="lg-pw"><span class="k">비밀번호</span><input id="lg-pw" type="password" autocomplete="current-password" placeholder="비밀번호"></label>
-        <label class="check"><input type="checkbox" id="lg-keep"> 이 기기에서 로그인 유지</label>
+        <h2 data-i18n="adminLogin">관리자 로그인</h2>
+        <p class="sub" data-i18n="loginSub">실적 현황은 관리자만 볼 수 있어요</p>
+        <label class="row" for="lg-id"><span class="k" data-i18n="userId">아이디</span><input id="lg-id" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="아이디" data-i18n-ph="userId"></label>
+        <label class="row" for="lg-pw"><span class="k" data-i18n="password">비밀번호</span><input id="lg-pw" type="password" autocomplete="current-password" placeholder="비밀번호" data-i18n-ph="password"></label>
+        <label class="check"><input type="checkbox" id="lg-keep"> <span data-i18n="keepLogin">이 기기에서 로그인 유지</span></label>
         <p class="err" id="lg-err" role="alert" hidden></p>
-        <button type="submit" class="btn primary" id="lg-btn">로그인</button>
-        <button type="button" class="linkish" id="backToWorker">실적 입력 화면으로 돌아가기</button>
+        <button type="submit" class="btn primary" id="lg-btn" data-i18n="login">로그인</button>
+        <button type="button" class="linkish" id="backToWorker" data-i18n="backToWorker">실적 입력 화면으로 돌아가기</button>
       </form>
     </div>
   </section>
@@ -316,20 +316,20 @@ tr:last-child td{border-bottom:0}
   <section id="statusView" hidden>
     <div class="sheet">
       <div class="filters">
-        <label class="fld"><span>시작일</span><input type="date" id="a-from"></label>
-        <label class="fld"><span>종료일</span><input type="date" id="a-to"></label>
-        <label class="fld"><span>근무조</span><select id="a-shift"><option value="">전체</option><option>주간</option><option>야간</option></select></label>
-        <label class="fld"><span>공정</span><select id="a-proc"><option value="">전체 공정</option></select></label>
+        <label class="fld"><span data-i18n="fromDate">시작일</span><input type="date" id="a-from"></label>
+        <label class="fld"><span data-i18n="toDate">종료일</span><input type="date" id="a-to"></label>
+        <label class="fld"><span data-i18n="shiftF">근무조</span><select id="a-shift"><option value="" data-i18n="all">전체</option><option value="주간" data-i18n="day">주간</option><option value="야간" data-i18n="night">야간</option></select></label>
+        <label class="fld"><span data-i18n="process">공정</span><select id="a-proc"><option value="">전체 공정</option></select></label>
       </div>
-      <div class="actions"><button type="button" class="btn small" id="refresh">새로고침</button><span class="hint" id="updated"></span></div>
+      <div class="actions"><button type="button" class="btn small" id="refresh" data-i18n="refresh">새로고침</button><span class="hint" id="updated"></span></div>
       <div class="kpis" id="kpis"></div>
       <div id="missing"></div>
       <div id="procList" class="sheet" style="margin-top:0"></div>
 
-      <div class="section-h"><h2>실적 이력</h2>
+      <div class="section-h"><h2 data-i18n="history">실적 이력</h2>
         <div class="actions">
-          <button type="button" class="btn small" id="copyTsv">엑셀에 붙여넣기용 복사</button>
-          <button type="button" class="btn small" id="saveCsv">CSV 파일 저장</button>
+          <button type="button" class="btn small" id="copyTsv" data-i18n="copyTsv">엑셀에 붙여넣기용 복사</button>
+          <button type="button" class="btn small" id="saveCsv" data-i18n="saveCsv">CSV 파일 저장</button>
         </div>
       </div>
       <div class="proc"><div class="tbl-wrap"><table id="rawTbl"></table></div></div>
@@ -340,11 +340,11 @@ tr:last-child td{border-bottom:0}
   <section id="settingsView" hidden>
     <div class="sheet">
       <div class="panel">
-        <label class="fld"><span>공정 목록 (한 줄에 하나)</span><textarea id="s-procs" rows="7"></textarea></label>
-        <label class="fld"><span>사번 명단 (한 줄에 한 명: 사번 이름, 비워도 됨)</span><textarea id="s-workers" rows="7" placeholder="예)&#10;1023 김철수&#10;1024 Sokha&#10;명단을 넣으면 현황에 이름이 같이 보이고 미제출자를 알려줍니다."></textarea></label>
-        <button type="button" class="btn primary" id="saveCfg">설정 저장</button>
+        <label class="fld"><span data-i18n="procListLabel">공정 목록 (한 줄에 하나)</span><textarea id="s-procs" rows="7"></textarea></label>
+        <label class="fld"><span data-i18n="rosterLabel">사번 명단 (한 줄에 한 명: 사번 이름, 비워도 됨)</span><textarea id="s-workers" rows="7" data-i18n-ph="rosterPh" placeholder="예)&#10;1023 김철수&#10;1024 Sokha&#10;명단을 넣으면 현황에 이름이 같이 보이고 미제출자를 알려줍니다."></textarea></label>
+        <button type="button" class="btn primary" id="saveCfg" data-i18n="saveCfg">설정 저장</button>
       </div>
-      <p class="hint">관리자 아이디·비밀번호는 구글 시트의 ‘관리자’ 탭에서 바꿀 수 있어요.</p>
+      <p class="hint" data-i18n="pwHint">관리자 아이디·비밀번호는 구글 시트의 ‘관리자’ 탭에서 바꿀 수 있어요.</p>
       <div class="panel" id="demoPanel" hidden>
         <p class="panel-title">연습 데이터</p>
         <p class="hint">이 컴퓨터에 저장된 연습용 실적을 모두 지웁니다.</p>
@@ -400,19 +400,19 @@ async function api(action, payload, useAuth){
   return j.data;
 }
 const adminApi = (action, payload) => api(action, payload, true).catch(e => {
-  if (e && e.code === 'bad_login' && action !== 'login') logout('다시 로그인하세요');
+  if (e && e.code === 'bad_login' && action !== 'login') logout('relogin');
   throw e;
 });
-/* ---------- 언어: 작업자 화면은 한국어 / 크메르어 (관리자 화면은 한국어) ---------- */
+/* ---------- 언어: 작업자·관리자 화면 모두 한국어 / 크메르어 ---------- */
 const I18N = {
   ko: {
     admin: '관리자', workerMode: '작업자 모드', title: '실적 입력',
     name: '사번', namePh: '사번 입력 · បញ្ចូលអាយឌី', date: '날짜', shift: '근무', day: '주간', night: '야간',
-    addLine: '＋ 다른 공정·품번 추가', note: '특이사항', notePh: '설비 고장, 자재 대기 등 (없으면 비워두세요)',
+    addLine: '＋ 다른 공정 추가', note: '특이사항', notePh: '설비 고장, 자재 대기 등 (없으면 비워두세요)',
     submit: '실적 제출', submitting: '제출하는 중…',
     mineTitle: '제출 내역', mineHint: '이 휴대폰에서 낸 실적이에요. 잘못 적었으면 삭제하고 다시 제출하세요.',
     noServer: '아직 서버에 연결되지 않았습니다. 관리자에게 문의하세요.',
-    line: '작업 {n}', remove: '빼기', process: '공정', pickProc: '공정 선택', part: '품번', partPh: '예: 91210-AB010',
+    line: '작업 {n}', remove: '빼기', process: '공정', pickProc: '공정 선택',
     qty: '생산수량', ng: '불량', ea: '개', time: '작업시간', start: '시작', end: '종료', dur: '{m}분',
     nightRule: '야간조는 {n}일 07:00 이전 작업까지 {d}일 작업으로 기록돼요',
     autoNight: '07시 이전이라 {d}일 야간조 작업으로 맞췄어요', needTimeFmt: '작업 {n}의 시각을 11:25처럼 적어 주세요',
@@ -432,7 +432,7 @@ const I18N = {
     submit: 'ដាក់ស្នើលទ្ធផល', submitting: 'កំពុងដាក់ស្នើ…',
     mineTitle: 'ប្រវត្តិដាក់ស្នើ', mineHint: 'នេះជាលទ្ធផលដែលបានដាក់ស្នើពីទូរស័ព្ទនេះ។ បើសរសេរខុស សូមលុប ហើយដាក់ស្នើម្ដងទៀត។',
     noServer: 'មិនទាន់ភ្ជាប់ម៉ាស៊ីនមេនៅឡើយ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។',
-    line: 'ការងារទី {n}', remove: 'ដកចេញ', process: 'ផ្នែក', pickProc: 'ជ្រើសរើសផ្នែក', part: 'លេខ P/N', partPh: 'ឧ. 91210-AB010',
+    line: 'ការងារទី {n}', remove: 'ដកចេញ', process: 'ផ្នែក', pickProc: 'ជ្រើសរើសផ្នែក',
     qty: 'ចំនួនផលិត', ng: 'ចំនួនខូច', ea: 'គ្រឿង', time: 'ម៉ោងធ្វើការ', start: 'ចាប់ផ្ដើម', end: 'បញ្ចប់', dur: '{m} នាទី',
     nightRule: 'វេនយប់៖ ការងាររហូតដល់មុនម៉ោង 07:00 ថ្ងៃទី {n} ត្រូវកត់ត្រាជាការងារថ្ងៃទី {d}',
     autoNight: 'ដោយសារមុនម៉ោង 07:00 បានកំណត់ជាការងារវេនយប់ ថ្ងៃទី {d}', needTimeFmt: 'សូមសរសេរម៉ោងសម្រាប់ការងារទី {n} ដូចជា 11:25',
@@ -446,6 +446,54 @@ const I18N = {
     err_default: 'មិនអាចដំណើរការបានទេ។ សូមព្យាយាមម្ដងទៀតបន្តិចក្រោយ'
   }
 };
+// 작업 칸에 추가된 항목: 호기명 · 선번 · LOT
+Object.assign(I18N.ko, {
+  machine: '호기명', machinePh: '예: 3호기', wire: '선번', wirePh: '선번 입력', lot: 'LOT', lotPh: 'LOT 번호'
+});
+Object.assign(I18N.km, {
+  machine: 'ម៉ាស៊ីន', machinePh: 'ឧ. 3호기', wire: 'លេខខ្សែ', wirePh: 'បញ្ចូលលេខខ្សែ', lot: 'លេខ LOT', lotPh: 'បញ្ចូលលេខ LOT'
+});
+// 관리자 화면 (로그인 · 공정별 현황 · 설정)
+Object.assign(I18N.ko, {
+  adminMode: '관리자 모드', adminLogin: '관리자 로그인', loginSub: '실적 현황은 관리자만 볼 수 있어요',
+  userId: '아이디', password: '비밀번호', keepLogin: '이 기기에서 로그인 유지', login: '로그인', checking: '확인하는 중…',
+  backToWorker: '실적 입력 화면으로 돌아가기', needLogin: '아이디와 비밀번호를 입력하세요', relogin: '다시 로그인하세요',
+  err_bad_login: '아이디 또는 비밀번호가 맞지 않습니다', err_locked: '비밀번호를 여러 번 틀렸습니다. 5분 뒤에 다시 시도하세요',
+  logout: '로그아웃', who: '{name} 님', tabStatus: '공정별 현황', tabSettings: '설정',
+  fromDate: '시작일', toDate: '종료일', shiftF: '근무조', all: '전체', allProc: '전체 공정', refresh: '새로고침', asOf: '{t} 기준',
+  kpiQty: '총 생산', kpiNg: '총 불량', kpiRate: '불량률 {v}', kpiMins: '작업시간 합계', kpiMinsSub: '분 · UPH {v}',
+  kpiPeople: '제출 인원', kpiOf: '명단 {n}명 중', kpiPeopleU: '명',
+  missing: '미제출 {n}명: {list}', allDone: '명단의 모든 작업자가 제출했습니다', noData: '이 기간에 입력된 실적이 없습니다',
+  stQty: '생산', stNg: '불량', stRate: '불량률', stWork: '작업', minU: '분', stPeople: '인원',
+  thId: '사번', thMins: '작업(분)', thMachine: '호기', thShift: '조', thSubmitted: '제출', example: '예시',
+  history: '실적 이력', copyTsv: '엑셀에 붙여넣기용 복사', saveCsv: 'CSV 파일 저장', noRows: '표시할 기록이 없습니다',
+  noCopy: '복사할 기록이 없습니다', copiedN: '{n}줄을 복사했습니다. 엑셀에 붙여넣으세요', copied: '복사했습니다. 엑셀에 붙여넣으세요',
+  copyFail: '복사하지 못했습니다. CSV 저장을 이용하세요', noSave: '저장할 기록이 없습니다', rowDeleted: '실적 한 건을 삭제했습니다',
+  procListLabel: '공정 목록 (한 줄에 하나)', rosterLabel: '사번 명단 (한 줄에 한 명: 사번 이름, 비워도 됨)',
+  rosterPh: '예)\n1023 김철수\n1024 Sokha\n명단을 넣으면 현황에 이름이 같이 보이고 미제출자를 알려줍니다.',
+  saveCfg: '설정 저장', pwHint: '관리자 아이디·비밀번호는 구글 시트의 ‘관리자’ 탭에서 바꿀 수 있어요.',
+  needProcCfg: '공정을 하나 이상 입력하세요', cfgSaved: '설정을 저장했습니다'
+});
+Object.assign(I18N.km, {
+  adminMode: 'របៀបអ្នកគ្រប់គ្រង', adminLogin: 'ចូលសម្រាប់អ្នកគ្រប់គ្រង', loginSub: 'មានតែអ្នកគ្រប់គ្រងទេដែលអាចមើលលទ្ធផលបាន',
+  userId: 'អាយឌី', password: 'ពាក្យសម្ងាត់', keepLogin: 'រក្សាការចូលនៅលើឧបករណ៍នេះ', login: 'ចូល', checking: 'កំពុងពិនិត្យ…',
+  backToWorker: 'ត្រឡប់ទៅទំព័របញ្ចូលលទ្ធផល', needLogin: 'សូមបញ្ចូលអាយឌី និងពាក្យសម្ងាត់', relogin: 'សូមចូលម្ដងទៀត',
+  err_bad_login: 'អាយឌី ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ', err_locked: 'បានបញ្ចូលពាក្យសម្ងាត់ខុសច្រើនដង។ សូមព្យាយាមម្ដងទៀតក្រោយ 5 នាទី',
+  logout: 'ចាកចេញ', who: '{name}', tabStatus: 'ស្ថានភាពតាមផ្នែក', tabSettings: 'ការកំណត់',
+  fromDate: 'ថ្ងៃចាប់ផ្ដើម', toDate: 'ថ្ងៃបញ្ចប់', shiftF: 'វេន', all: 'ទាំងអស់', allProc: 'ផ្នែកទាំងអស់', refresh: 'ផ្ទុកឡើងវិញ', asOf: 'គិតត្រឹមម៉ោង {t}',
+  kpiQty: 'ផលិតសរុប', kpiNg: 'ខូចសរុប', kpiRate: 'អត្រាខូច {v}', kpiMins: 'ម៉ោងធ្វើការសរុប', kpiMinsSub: 'នាទី · UPH {v}',
+  kpiPeople: 'អ្នកដាក់ស្នើ', kpiOf: 'ក្នុងចំណោម {n} នាក់', kpiPeopleU: 'នាក់',
+  missing: 'មិនទាន់ដាក់ស្នើ {n} នាក់៖ {list}', allDone: 'កម្មករទាំងអស់ក្នុងបញ្ជីបានដាក់ស្នើរួចហើយ', noData: 'មិនមានលទ្ធផលក្នុងរយៈពេលនេះទេ',
+  stQty: 'ផលិត', stNg: 'ខូច', stRate: 'អត្រាខូច', stWork: 'ធ្វើការ', minU: ' នាទី', stPeople: 'ចំនួននាក់',
+  thId: 'អាយឌី', thMins: 'ធ្វើការ (នាទី)', thMachine: 'ម៉ាស៊ីន', thShift: 'វេន', thSubmitted: 'ដាក់ស្នើ', example: 'ឧទាហរណ៍',
+  history: 'ប្រវត្តិលទ្ធផល', copyTsv: 'ចម្លងសម្រាប់ Excel', saveCsv: 'រក្សាទុកជាឯកសារ CSV', noRows: 'មិនមានទិន្នន័យ',
+  noCopy: 'មិនមានទិន្នន័យសម្រាប់ចម្លង', copiedN: 'បានចម្លង {n} ជួរ។ សូមបិទភ្ជាប់ក្នុង Excel', copied: 'បានចម្លង។ សូមបិទភ្ជាប់ក្នុង Excel',
+  copyFail: 'មិនអាចចម្លងបានទេ។ សូមប្រើការរក្សាទុក CSV', noSave: 'មិនមានទិន្នន័យសម្រាប់រក្សាទុក', rowDeleted: 'បានលុបលទ្ធផលមួយ',
+  procListLabel: 'បញ្ជីផ្នែក (មួយបន្ទាត់ មួយផ្នែក)', rosterLabel: 'បញ្ជីអាយឌី (មួយបន្ទាត់ម្នាក់៖ អាយឌី ឈ្មោះ · អាចទុកទទេ)',
+  rosterPh: 'ឧ.\n1023 Kim\n1024 Sokha\nបើបញ្ចូលបញ្ជី ឈ្មោះនឹងបង្ហាញជាមួយ ហើយអាចដឹងអ្នកមិនទាន់ដាក់ស្នើ។',
+  saveCfg: 'រក្សាទុកការកំណត់', pwHint: 'អាចប្ដូរអាយឌី និងពាក្យសម្ងាត់អ្នកគ្រប់គ្រង នៅផ្ទាំង ‘관리자’ ក្នុង Google Sheets។',
+  needProcCfg: 'សូមបញ្ចូលផ្នែកយ៉ាងហោចណាស់មួយ', cfgSaved: 'បានរក្សាទុកការកំណត់'
+});
 let lang = local.get('lang') || ((navigator.language || '').toLowerCase().startsWith('km') ? 'km' : 'ko');
 if (!I18N[lang]) lang = 'ko';
 function t(key, vars){
@@ -460,10 +508,9 @@ function lbl(key){
 }
 function errText(e){
   const c = e && e.code;
-  if (c === 'bad_login') return '아이디 또는 비밀번호가 맞지 않습니다';
-  if (c === 'locked') return '비밀번호를 여러 번 틀렸습니다. 5분 뒤에 다시 시도하세요';
   return I18N[lang]['err_' + c] || t('err_default');
 }
+const shiftText = s => s === '야간' ? t('night') : s === '주간' ? t('day') : s;
 
 /* ---------- 연습 모드 (내 컴퓨터에서 열었을 때만) ---------- */
 // 관리자 비밀번호 원문 대신 SHA-256 값만 둡니다. 실제 확인은 구글 시트 '관리자' 탭에서 합니다.
@@ -475,14 +522,14 @@ async function sha256(s){
 function demoGet(k, fb){ try { const v = JSON.parse(local.get(k) || 'null'); return v == null ? fb : v; } catch(e){ return fb; } }
 function demoSeed(){
   const d = today();
-  const mk = (id, worker, shift, time, process, part, qty, ng, note, t) => { const [s, e] = time.split('~'); return { id, date: d, shift, worker, time, process, part, qty, ng, mins: spanMins(s, e), note, createdAt: d + ' ' + t, key: 'seed', example: true }; };
+  const mk = (id, worker, shift, time, process, machine, part, wire, lot, qty, ng, note, at) => { const [s, e] = time.split('~'); return { id, date: d, shift, worker, time, process, machine, part, wire, lot, qty, ng, mins: spanMins(s, e), note, createdAt: d + ' ' + at, key: 'seed', example: true }; };
   return [
-    mk('ex1', '1001', '주간', '08:00~17:00', '절단·압착', '91210-AB010', 3200, 6, '', '17:10'),
-    mk('ex2', '1002', '주간', '08:00~12:00', '서브조립', '91210-AB010', 420, 2, '오전 자재 대기 30분', '17:12'),
-    mk('ex2', '1002', '주간', '13:00~17:00', '조립', '91850-CD200', 180, 1, '오전 자재 대기 30분', '17:12'),
-    mk('ex3', '1003', '야간', '20:00~00:00', '통전검사', '91210-AB010', 310, 2, '', '07:05'),
-    mk('ex3', '1003', '야간', '01:00~05:00', '통전검사', '91210-AB010', 300, 2, '', '07:05'),
-    mk('ex4', '1004', '주간', '08:00~17:00', '절단·압착', '91850-CD200', 2750, 11, '3호기 압착고 조정', '17:20')
+    mk('ex1', '1001', '주간', '08:00~17:00', '절단·압착', '1호기', '91210-AB010', '101', 'L2609-01', 3200, 6, '', '17:10'),
+    mk('ex2', '1002', '주간', '08:00~12:00', '서브조립', '', '91210-AB010', '', 'L2609-01', 420, 2, '오전 자재 대기 30분', '17:12'),
+    mk('ex2', '1002', '주간', '13:00~17:00', '조립', '', '91850-CD200', '', 'L2609-03', 180, 1, '오전 자재 대기 30분', '17:12'),
+    mk('ex3', '1003', '야간', '20:00~00:00', '통전검사', '검사기 2', '91210-AB010', '', 'L2609-01', 310, 2, '', '07:05'),
+    mk('ex3', '1003', '야간', '01:00~05:00', '통전검사', '검사기 2', '91210-AB010', '', 'L2609-02', 300, 2, '', '07:05'),
+    mk('ex4', '1004', '주간', '08:00~17:00', '절단·압착', '3호기', '91850-CD200', '205', 'L2609-03', 2750, 11, '3호기 압착고 조정', '17:20')
   ];
 }
 async function demoApi(p){
@@ -497,7 +544,7 @@ async function demoApi(p){
     case 'config': return { processes: conf.processes };
     case 'submit': {
       const id = rid(), r = p.report;
-      for (const l of r.lines) rows.push({ id, date: r.date, shift: r.shift, worker: r.worker, process: l.process, part: l.part, qty: l.qty, ng: l.ng, mins: l.mins, time: l.start && l.end ? l.start + '~' + l.end : '', note: r.note, createdAt: nowText(), key: p.key });
+      for (const l of r.lines) rows.push({ id, date: r.date, shift: r.shift, worker: r.worker, process: l.process, machine: l.machine, part: l.part, wire: l.wire, lot: l.lot, qty: l.qty, ng: l.ng, mins: l.mins, time: l.start && l.end ? l.start + '~' + l.end : '', note: r.note, createdAt: nowText(), key: p.key });
       save(rows); return { id };
     }
     case 'mine': return rows.filter(r => r.date === p.date && r.key === p.key).map(pub);
@@ -518,6 +565,7 @@ async function demoApi(p){
 let cfg = { processes: DEFAULT_PROCS.slice(), workers: [] };
 let admin = null;   // 로그인한 관리자 { name }
 let rows = [];
+let lastLoaded = '';   // 현황을 마지막으로 불러온 시각 (HH:MM)
 let lineSeq = 0, pollT = null;
 
 $('#demoNotice').hidden = !DEMO;
@@ -525,12 +573,16 @@ $('#noServer').hidden = DEMO || !!API_URL;
 $('#demoPanel').hidden = !DEMO;
 
 /* ---------- 화면 전환: 작업자 / 로그인 / 관리자 ---------- */
+let currentView = 'worker';
+function modeText(view){ return (view === 'status' || view === 'settings') ? t('adminMode') : (view === 'login' ? t('adminLogin') : ''); }
+function whoText(){ return admin ? t('who', { name: admin.name }) : ''; }
 function show(view){
+  currentView = view;
   const isAdmin = view === 'status' || view === 'settings';
   document.body.classList.toggle('is-admin', isAdmin);
-  $('#modeLabel').textContent = isAdmin ? '관리자 모드' : (view === 'login' ? '관리자 로그인' : '');
+  $('#modeLabel').textContent = modeText(view);
   $('#modeLabel').hidden = view === 'worker';   // 작업자 화면은 제목만 표시
-  $('#langBtn').hidden = view !== 'worker';
+  $('#langBtn').hidden = false;                 // 작업자·관리자 화면 모두 한국어/크메르어 전환
   $('#workerView').hidden = view !== 'worker';
   $('#loginView').hidden = view !== 'login';
   $('#statusView').hidden = view !== 'status';
@@ -539,7 +591,7 @@ function show(view){
   $('#toAdmin').hidden = true;   // 작업자 화면에는 관리자 버튼을 보이지 않음 (#admin 주소나 제목 5번 누르기로 진입)
   $('#logout').hidden = !isAdmin;
   $('#who').hidden = !isAdmin;
-  $('#who').textContent = admin ? admin.name + ' 님' : '';
+  $('#who').textContent = whoText();
   for (const b of document.querySelectorAll('.tab')) b.setAttribute('aria-selected', String(b.dataset.tab === view));
   document.querySelector('meta[name=theme-color]').content = isAdmin ? '#2b2620' : '#f4efe7';
   try { history.replaceState(null, '', view === 'worker' ? location.pathname : '#' + (isAdmin ? view : 'admin')); } catch(e){}
@@ -569,12 +621,14 @@ function loadAuth(){
   return null;
 }
 function saveAuth(a, keep){ sess.del('adminAuth'); local.del('adminAuth'); (keep ? local : sess).set('adminAuth', JSON.stringify(a)); }
-function logout(msg){
+// msgKey: 로그인 화면에 보여 줄 안내 문구의 키 (언어를 바꾸면 문구도 바뀜)
+function setLoginErr(key){ const e = $('#lg-err'); e.hidden = !key; e.dataset.key = key || ''; e.textContent = key ? t(key) : ''; }
+function logout(msgKey){
   sess.del('adminAuth'); local.del('adminAuth');
   auth = null; admin = null; rows = [];
   $('#lg-pw').value = '';
-  const e = $('#lg-err'); e.hidden = !msg; e.textContent = msg || '';
-  show(msg ? 'login' : 'worker');
+  setLoginErr(msgKey);
+  show(msgKey ? 'login' : 'worker');
 }
 $('#logout').addEventListener('click', () => logout());
 
@@ -589,9 +643,8 @@ function applyAdminConfig(r){
 $('#loginForm').addEventListener('submit', async e => {
   e.preventDefault();
   const user = $('#lg-id').value.trim(), pass = $('#lg-pw').value;
-  const err = $('#lg-err');
-  if (!user || !pass) { err.hidden = false; err.textContent = '아이디와 비밀번호를 입력하세요'; return; }
-  const b = $('#lg-btn'); b.disabled = true; b.textContent = '확인하는 중…'; err.hidden = true;
+  if (!user || !pass) { setLoginErr('needLogin'); return; }
+  const b = $('#lg-btn'); b.disabled = true; b.textContent = t('checking'); setLoginErr('');
   auth = { user, pass };
   try {
     const r = await adminApi('login');
@@ -602,8 +655,9 @@ $('#loginForm').addEventListener('submit', async e => {
     show('status');
   } catch(ex) {
     auth = null;
-    err.hidden = false; err.textContent = errText(ex);
-  } finally { b.disabled = false; b.textContent = '로그인'; }
+    const key = 'err_' + (ex && ex.code);
+    setLoginErr(I18N.ko[key] ? key : 'err_default');
+  } finally { b.disabled = false; b.textContent = t('login'); }
 });
 
 /* ---------- 작업자: 실적 입력 ---------- */
@@ -684,9 +738,12 @@ function addLine(){
   const prevProc = last ? $('#l' + last.dataset.id + '-process').value : (local.get('lastProc') || '');
   // 앞 작업이 끝난 시각을 다음 작업의 시작으로 (11~12시, 12~1시처럼 이어서)
   const prevEnd = last ? (normTime($('#l' + last.dataset.id + '-end').value) || '') : '';
+  // 호기는 보통 같은 기계에서 이어서 하므로 앞 작업(없으면 이 휴대폰에서 마지막에 쓴 값)을 미리 채움
+  const prevMachine = last ? $('#l' + last.dataset.id + '-machine').value.trim() : (local.get('lastMachine') || '');
   el.innerHTML = `
     <div class="card-h"><h3 class="line-no"></h3><button type="button" class="linkish rm" data-i18n="remove">${esc(t('remove'))}</button></div>
     <label class="row" for="l${id}-process"><span class="k" data-i18n="process" data-sub>${lbl('process')}</span><select id="l${id}-process">${procOptions(prevProc)}</select></label>
+    <label class="row" for="l${id}-machine"><span class="k" data-i18n="machine" data-sub>${lbl('machine')}</span><input id="l${id}-machine" autocomplete="off" spellcheck="false" maxlength="50" value="${esc(prevMachine)}" placeholder="${esc(t('machinePh'))}" data-i18n-ph="machinePh"></label>
     <div class="row time-row"><span class="k"><span data-i18n="time" data-sub>${lbl('time')}</span><small class="dur" id="l${id}-dur"></small></span>
       <div class="trange">
         <input id="l${id}-start" class="tin" inputmode="numeric" maxlength="5" autocomplete="off" value="${esc(prevEnd)}" placeholder="${esc(t('start'))}" data-i18n-ph="start" aria-label="${esc(t('start'))}">
@@ -694,7 +751,8 @@ function addLine(){
         <input id="l${id}-end" class="tin" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="${esc(t('end'))}" data-i18n-ph="end" aria-label="${esc(t('end'))}">
       </div>
     </div>
-    <label class="row" for="l${id}-part"><span class="k" data-i18n="part" data-sub>${lbl('part')}</span><input id="l${id}-part" autocomplete="off" placeholder="${esc(t('partPh'))}" data-i18n-ph="partPh"></label>
+    <label class="row" for="l${id}-wire"><span class="k" data-i18n="wire" data-sub>${lbl('wire')}</span><input id="l${id}-wire" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="50" placeholder="${esc(t('wirePh'))}" data-i18n-ph="wirePh"></label>
+    <label class="row" for="l${id}-lot"><span class="k" data-i18n="lot" data-sub>${lbl('lot')}</span><input id="l${id}-lot" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="50" placeholder="${esc(t('lotPh'))}" data-i18n-ph="lotPh"></label>
     <label class="row" for="l${id}-qty"><span class="k" data-i18n="qty" data-sub>${lbl('qty')}</span><input id="l${id}-qty" class="numin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><span class="u" data-i18n="ea">${esc(t('ea'))}</span></label>
     <label class="row" for="l${id}-ng"><span class="k" data-i18n="ng" data-sub>${lbl('ng')}</span><input id="l${id}-ng" class="numin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><span class="u" data-i18n="ea">${esc(t('ea'))}</span></label>`;
   el.querySelector('.rm').addEventListener('click', () => { el.remove(); renumber(); });
@@ -714,7 +772,7 @@ function refreshLists(){
   document.querySelectorAll('#lines .tin').forEach(s => s.setAttribute('aria-label', s.placeholder));
   document.querySelectorAll('#lines .line').forEach(el => { markEmpty(el); updateDur(el); });
   const ap = $('#a-proc'), av = ap.value;
-  ap.innerHTML = '<option value="">전체 공정</option>' + cfg.processes.map(p => `<option${p === av ? ' selected' : ''}>${esc(p)}</option>`).join('');
+  ap.innerHTML = `<option value="">${esc(t('allProc'))}</option>` + cfg.processes.map(p => `<option${p === av ? ' selected' : ''}>${esc(p)}</option>`).join('');
 }
 
 /* 언어 적용 */
@@ -728,6 +786,11 @@ function applyLang(){
   const d = new Date(); $('#helloSub').textContent = t('dateFmt')(d);
   refreshLists(); renumber(); updateShiftNote();
   if (!$('#mineWrap').hidden) loadMine();
+  // 관리자 화면: 상단 표시·현황 표도 새 언어로
+  $('#modeLabel').textContent = modeText(currentView);
+  $('#who').textContent = whoText();
+  if (admin && currentView === 'status') { renderAdmin(); if (lastLoaded) $('#updated').textContent = t('asOf', { t: lastLoaded }); }
+  const le = $('#lg-err'); if (!le.hidden && le.dataset.key) le.textContent = t(le.dataset.key);
 }
 $('#langBtn').addEventListener('click', () => { lang = lang === 'ko' ? 'km' : 'ko'; local.set('lang', lang); applyLang(); });
 
@@ -757,7 +820,9 @@ $('#reportForm').addEventListener('submit', async e => {
     const tm = tidyTimes(el);
     const l = {
       process: $('#l' + id + '-process').value,
-      part: $('#l' + id + '-part').value.trim(),
+      machine: $('#l' + id + '-machine').value.trim(),
+      wire: $('#l' + id + '-wire').value.trim(),
+      lot: $('#l' + id + '-lot').value.trim(),
       qty: n($('#l' + id + '-qty').value),
       ng: n($('#l' + id + '-ng').value),
       start: tm.start || '', end: tm.end || '',
@@ -775,6 +840,7 @@ $('#reportForm').addEventListener('submit', async e => {
   try {
     await api('submit', { key: deviceKey, report: { date, shift, worker, lines, note: $('#f-note').value.trim() } });
     local.set('workerName', worker); local.set('lastProc', lines[lines.length - 1].process);
+    local.set('lastMachine', lines[lines.length - 1].machine || '');
     $('#lines').innerHTML = ''; addLine(); $('#f-note').value = '';
     const dm = $('#doneMsg'); dm.textContent = t('done', { name: worker, t: nowText().slice(11) }); dm.hidden = false;
     clearTimeout(dm._t); dm._t = setTimeout(() => dm.hidden = true, 6000);
@@ -818,7 +884,8 @@ async function loadAdmin(quiet){
   const from = $('#a-from').value || today(), to = $('#a-to').value || from;
   try {
     rows = await adminApi('list', { from, to });
-    $('#updated').textContent = nowText().slice(11) + ' 기준';
+    lastLoaded = nowText().slice(11);
+    $('#updated').textContent = t('asOf', { t: lastLoaded });
     renderAdmin();
   } catch(err) { if (!quiet) toast(errText(err)); }
 }
@@ -834,11 +901,7 @@ function roster(){
 }
 function whoOf(id){ const r = roster().find(x => x.id === id); return r && r.name ? id + ' ' + r.name : id; }
 // 입력한 시각 그대로 표시. 정렬할 때만 야간조 새벽(07시 전) 작업을 그날 밤 뒤로 보냄
-function timeText(r){
-  if (!r.time) return '';
-  const s = r.time.split('~')[0];
-  return r.time;
-}
+function timeText(r){ return r.time || ''; }
 function timeKey(r){
   const s = (r.time || '').split('~')[0]; if (!s) return 9999;
   const m = toMin(s); return r.shift === '야간' && m < NIGHT_CUT ? m + 1440 : m;
@@ -854,32 +917,35 @@ function renderAdmin(){
   const qty = list.reduce((a, r) => a + r.qty, 0), ng = list.reduce((a, r) => a + r.ng, 0), mins = list.reduce((a, r) => a + minsOf(r), 0);
   const uph = (q, m) => m ? fmt(q / (m / 60)) : '–';   // UPH = 시간당 생산량
   const people = new Set(list.map(r => r.worker));
+  const T = k => esc(t(k));
+  const pill = on => on ? `<span class="pill">${T('example')}</span>` : '';
   $('#kpis').innerHTML = `
-    <div class="kpi"><div class="k">총 생산</div><div class="v">${fmt(qty)}</div><div class="s">EA</div></div>
-    <div class="kpi"><div class="k">총 불량</div><div class="v ng">${fmt(ng)}</div><div class="s">불량률 ${pct(ng, qty)}</div></div>
-    <div class="kpi"><div class="k">작업시간 합계</div><div class="v">${fmt(mins)}</div><div class="s">분 · UPH ${uph(qty, mins)}</div></div>
-    <div class="kpi"><div class="k">제출 인원</div><div class="v">${people.size}</div><div class="s">${cfg.workers.length ? '명단 ' + cfg.workers.length + '명 중' : '명'}</div></div>`;
+    <div class="kpi"><div class="k">${T('kpiQty')}</div><div class="v">${fmt(qty)}</div><div class="s">EA</div></div>
+    <div class="kpi"><div class="k">${T('kpiNg')}</div><div class="v ng">${fmt(ng)}</div><div class="s">${esc(t('kpiRate', { v: pct(ng, qty) }))}</div></div>
+    <div class="kpi"><div class="k">${T('kpiMins')}</div><div class="v">${fmt(mins)}</div><div class="s">${esc(t('kpiMinsSub', { v: uph(qty, mins) }))}</div></div>
+    <div class="kpi"><div class="k">${T('kpiPeople')}</div><div class="v">${people.size}</div><div class="s">${esc(cfg.workers.length ? t('kpiOf', { n: cfg.workers.length }) : t('kpiPeopleU'))}</div></div>`;
 
   const m = $('#missing');
   if (cfg.workers.length && $('#a-from').value === $('#a-to').value) {
     const sf = $('#a-shift').value;
     const submitted = new Set(rows.filter(r => !sf || r.shift === sf).map(r => r.worker));
     const miss = roster().filter(w => !submitted.has(w.id)).map(w => w.name ? w.id + ' ' + w.name : w.id);
-    m.innerHTML = miss.length ? `<div class="missing">미제출 ${miss.length}명: ${miss.map(esc).join(', ')}</div>` : `<div class="missing ok">명단의 모든 작업자가 제출했습니다</div>`;
+    m.innerHTML = miss.length ? `<div class="missing">${esc(t('missing', { n: miss.length, list: miss.join(', ') }))}</div>` : `<div class="missing ok">${T('allDone')}</div>`;
   } else m.innerHTML = '';
 
   const byProc = new Map();
   for (const r of list) {
     if (!byProc.has(r.process)) byProc.set(r.process, new Map());
     const w = byProc.get(r.process);
-    if (!w.has(r.worker)) w.set(r.worker, { qty: 0, ng: 0, mins: 0, parts: new Set(), example: false });
-    const a = w.get(r.worker); a.qty += r.qty; a.ng += r.ng; a.mins += minsOf(r); if (r.part) a.parts.add(r.part); a.example = a.example || !!r.example;
+    if (!w.has(r.worker)) w.set(r.worker, { qty: 0, ng: 0, mins: 0, machines: new Set(), example: false });
+    const a = w.get(r.worker); a.qty += r.qty; a.ng += r.ng; a.mins += minsOf(r);
+    if (r.machine) a.machines.add(r.machine); a.example = a.example || !!r.example;
   }
   const order = cfg.processes;
   const procs = [...byProc.keys()].sort((a, b) => { const ia = order.indexOf(a), ib = order.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
   const pl = $('#procList');
   if (!procs.length) {
-    pl.innerHTML = '<div class="empty">이 기간에 입력된 실적이 없습니다</div>';
+    pl.innerHTML = `<div class="empty">${T('noData')}</div>`;
   } else {
     pl.innerHTML = procs.map(p => {
       const ws = [...byProc.get(p).entries()].sort((a, b) => b[1].qty - a[1].qty);
@@ -887,54 +953,56 @@ function renderAdmin(){
       const max = Math.max(1, ...ws.map(([, a]) => a.qty));
       return `<article class="proc">
         <div class="proc-head"><h3>${esc(p)}</h3>
-          <div class="proc-stats"><span>생산 <b>${fmt(pq)}</b></span><span>불량 <b class="ngv">${fmt(pn)}</b></span><span>불량률 <b>${pct(pn, pq)}</b></span><span>작업 <b>${fmt(pm)}</b>분</span><span>UPH <b>${uph(pq, pm)}</b></span><span>인원 <b>${ws.length}</b></span></div>
+          <div class="proc-stats"><span>${T('stQty')} <b>${fmt(pq)}</b></span><span>${T('stNg')} <b class="ngv">${fmt(pn)}</b></span><span>${T('stRate')} <b>${pct(pn, pq)}</b></span><span>${T('stWork')} <b>${fmt(pm)}</b>${T('minU')}</span><span>UPH <b>${uph(pq, pm)}</b></span><span>${T('stPeople')} <b>${ws.length}</b></span></div>
         </div>
         <div class="tbl-wrap"><table>
-          <thead><tr><th>사번</th><th class="barcell"></th><th class="r">생산</th><th class="r">불량</th><th class="r">작업(분)</th><th class="r">UPH</th><th>품번</th></tr></thead>
+          <thead><tr><th>${T('thId')}</th><th class="barcell"></th><th class="r">${T('stQty')}</th><th class="r">${T('stNg')}</th><th class="r">${T('thMins')}</th><th class="r">UPH</th><th>${T('thMachine')}</th></tr></thead>
           <tbody>${ws.map(([name, a]) => `<tr>
-            <td>${esc(whoOf(name))}${a.example ? '<span class="pill">예시</span>' : ''}</td>
+            <td>${esc(whoOf(name))}${pill(a.example)}</td>
             <td class="barcell"><div class="bar"><i style="width:${(a.qty / max * 100).toFixed(1)}%"></i></div></td>
             <td class="r num">${fmt(a.qty)}</td>
             <td class="r num ${a.ng ? 'ngtxt' : 'muted'}">${fmt(a.ng)}</td>
             <td class="r num">${a.mins ? fmt(a.mins) : '–'}</td>
             <td class="r num">${uph(a.qty, a.mins)}</td>
-            <td class="muted">${[...a.parts].map(esc).join(', ') || '–'}</td></tr>`).join('')}</tbody>
+            <td class="muted">${[...a.machines].map(esc).join(', ') || '–'}</td></tr>`).join('')}</tbody>
         </table></div></article>`;
     }).join('');
   }
 
   const tbl = $('#rawTbl');
-  if (!list.length) { tbl.innerHTML = '<tbody><tr><td class="muted">표시할 기록이 없습니다</td></tr></tbody>'; return; }
-  tbl.innerHTML = `<thead><tr><th>날짜</th><th>조</th><th>사번</th><th>작업시간</th><th>공정</th><th>품번</th><th class="r">생산</th><th class="r">불량</th><th class="r">작업(분)</th><th>특이사항</th><th>제출</th><th></th></tr></thead>
+  if (!list.length) { tbl.innerHTML = `<tbody><tr><td class="muted">${T('noRows')}</td></tr></tbody>`; return; }
+  const dash = v => esc(v) || '<span class="muted">–</span>';
+  tbl.innerHTML = `<thead><tr><th>${T('date')}</th><th>${T('thShift')}</th><th>${T('thId')}</th><th>${T('time')}</th><th>${T('process')}</th><th>${T('thMachine')}</th><th>${T('wire')}</th><th>${T('lot')}</th><th class="r">${T('stQty')}</th><th class="r">${T('stNg')}</th><th class="r">${T('thMins')}</th><th>${T('note')}</th><th>${T('thSubmitted')}</th><th></th></tr></thead>
     <tbody>${list.map(r => `<tr>
-      <td class="num">${esc(r.date.slice(5))}</td><td>${esc(r.shift)}</td><td>${esc(whoOf(r.worker))}${r.example ? '<span class="pill">예시</span>' : ''}</td>
-      <td class="num">${esc(timeText(r)) || '<span class="muted">–</span>'}</td>
-      <td>${esc(r.process)}</td><td class="muted">${esc(r.part) || '–'}</td>
+      <td class="num">${esc(r.date.slice(5))}</td><td>${esc(shiftText(r.shift))}</td><td>${esc(whoOf(r.worker))}${pill(r.example)}</td>
+      <td class="num">${dash(timeText(r))}</td>
+      <td>${esc(r.process)}</td><td>${dash(r.machine)}</td><td class="num">${dash(r.wire)}</td><td class="num">${dash(r.lot)}</td>
       <td class="r num">${fmt(r.qty)}</td><td class="r num ${r.ng ? 'ngtxt' : 'muted'}">${fmt(r.ng)}</td><td class="r num">${minsOf(r) ? fmt(minsOf(r)) : '–'}</td>
       <td class="muted">${esc(r.note)}</td><td class="num muted">${esc(String(r.createdAt).slice(11, 16))}</td>
-      <td><button type="button" class="btn small danger" data-del="${esc(r.id)}">삭제</button></td></tr>`).join('')}</tbody>`;
+      <td><button type="button" class="btn small danger" data-del="${esc(r.id)}">${T('del')}</button></td></tr>`).join('')}</tbody>`;
 }
 
 $('#rawTbl').addEventListener('click', async e => {
   const b = e.target.closest('[data-del]'); if (!b) return;
-  if (b.dataset.arm !== '1') { b.dataset.arm = '1'; b.textContent = '정말 삭제'; return; }
-  try { await adminApi('remove', { id: b.dataset.del }); toast('실적 한 건을 삭제했습니다'); loadAdmin(); } catch(err) { toast(errText(err)); }
+  if (b.dataset.arm !== '1') { b.dataset.arm = '1'; b.textContent = t('delSure'); return; }
+  try { await adminApi('remove', { id: b.dataset.del }); toast(t('rowDeleted')); loadAdmin(); } catch(err) { toast(errText(err)); }
 });
 
-const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','품번','생산수량','불량수량','작업시간(분)','특이사항','제출시각'];
-const rowVals = r => { const w = roster().find(x => x.id === r.worker); return [r.date, r.shift, r.worker, w ? w.name : '', timeText(r), r.process, r.part, r.qty, r.ng, minsOf(r), r.note, r.createdAt]; };
+// 엑셀·CSV 제목 줄은 구글 시트와 맞춰 한국어로 고정
+const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','호기명','선번','LOT','생산수량','불량수량','작업시간(분)','특이사항','제출시각'];
+const rowVals = r => { const w = roster().find(x => x.id === r.worker); return [r.date, r.shift, r.worker, w ? w.name : '', timeText(r), r.process, r.machine || '', r.wire || '', r.lot || '', r.qty, r.ng, minsOf(r), r.note, r.createdAt]; };
 $('#copyTsv').addEventListener('click', async () => {
-  const list = flatRows(); if (!list.length) { toast('복사할 기록이 없습니다'); return; }
+  const list = flatRows(); if (!list.length) { toast(t('noCopy')); return; }
   const tsv = [HEAD, ...list.map(rowVals)].map(a => a.map(v => String(v ?? '').replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
-  try { await navigator.clipboard.writeText(tsv); toast(list.length + '줄을 복사했습니다. 엑셀에 붙여넣으세요'); }
+  try { await navigator.clipboard.writeText(tsv); toast(t('copiedN', { n: list.length })); }
   catch(e) {
     const ta = document.createElement('textarea'); ta.value = tsv; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select();
     let ok = false; try { ok = document.execCommand('copy'); } catch(_){}
-    ta.remove(); toast(ok ? '복사했습니다. 엑셀에 붙여넣으세요' : '복사하지 못했습니다. CSV 저장을 이용하세요');
+    ta.remove(); toast(ok ? t('copied') : t('copyFail'));
   }
 });
 $('#saveCsv').addEventListener('click', () => {
-  const list = flatRows(); if (!list.length) { toast('저장할 기록이 없습니다'); return; }
+  const list = flatRows(); if (!list.length) { toast(t('noSave')); return; }
   const q = v => { const s = String(v ?? ''); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
   const csv = '﻿' + [HEAD, ...list.map(rowVals)].map(a => a.map(q).join(',')).join('\r\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
@@ -946,8 +1014,8 @@ $('#saveCsv').addEventListener('click', () => {
 const toList = s => [...new Set(s.split('\n').map(x => x.trim()).filter(Boolean))];
 $('#saveCfg').addEventListener('click', async () => {
   const processes = toList($('#s-procs').value), workers = toList($('#s-workers').value);
-  if (!processes.length) { toast('공정을 하나 이상 입력하세요'); return; }
-  try { await adminApi('saveConfig', { processes, workers }); cfg = { processes, workers }; refreshLists(); renderAdmin(); toast('설정을 저장했습니다'); }
+  if (!processes.length) { toast(t('needProcCfg')); return; }
+  try { await adminApi('saveConfig', { processes, workers }); cfg = { processes, workers }; refreshLists(); renderAdmin(); toast(t('cfgSaved')); }
   catch(e) { toast(errText(e)); }
 });
 $('#clearDemo').addEventListener('click', () => {
