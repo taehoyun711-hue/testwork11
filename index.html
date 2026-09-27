@@ -124,7 +124,7 @@ html[lang="km"] .row .k{width:auto;max-width:44%;line-height:1.35}
 html[lang="km"] .hello h2{font-size:24px;line-height:1.5}
 html[lang="km"] .btn.primary{font-size:17px}
 .row.col{flex-direction:column;align-items:stretch;gap:6px;padding-block:14px}
-.row.col .k{width:auto}
+.row.col .k{width:auto;max-width:none}
 .row textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--fill);border:0;border-radius:var(--r-s);padding:12px 14px;min-height:84px;resize:vertical;width:100%}
 .row textarea:focus-visible{outline:2px solid var(--accent);outline-offset:0}
 
@@ -282,7 +282,7 @@ tr:last-child td{border-bottom:0}
       <button type="button" class="add-btn" id="addLine" data-i18n="addLine">＋ 다른 공정 추가</button>
 
       <div class="card">
-        <label class="row col" for="f-note"><span class="k" data-i18n="note" data-sub>비가동 시간</span><textarea id="f-note"></textarea></label>
+        <label class="row col" for="f-note"><span class="k" data-i18n="note" data-sub>특이사항(비가동 사유)</span><textarea id="f-note"></textarea></label>
       </div>
 
       <div class="done" id="doneMsg" role="status" hidden></div>
@@ -408,7 +408,7 @@ const I18N = {
   ko: {
     admin: '관리자', workerMode: '작업자 모드', title: '실적 입력',
     name: '사번', namePh: '사번 입력 · បញ្ចូលអាយឌី', date: '날짜', shift: '근무', day: '주간', night: '야간',
-    addLine: '＋ 다른 공정 추가', note: '비가동 시간',
+    addLine: '＋ 다른 공정 추가', note: '특이사항(비가동 사유)',
     submit: '실적 제출', submitting: '제출하는 중…',
     mineTitle: '제출 내역', mineHint: '이 휴대폰에서 낸 실적이에요. 잘못 적었으면 삭제하고 다시 제출하세요.',
     noServer: '아직 서버에 연결되지 않았습니다. 관리자에게 문의하세요.',
@@ -428,7 +428,7 @@ const I18N = {
   km: {
     admin: 'អ្នកគ្រប់គ្រង', workerMode: 'សម្រាប់កម្មករ', title: 'បញ្ចូលលទ្ធផលការងារ',
     name: 'អាយឌី', namePh: 'បញ្ចូលអាយឌី', date: 'កាលបរិច្ឆេទ', shift: 'វេន', day: 'វេនថ្ងៃ', night: 'វេនយប់',
-    addLine: '＋ បន្ថែមការងារផ្សេងទៀត', note: 'ពេលវេលាឈប់ដំណើរការ',
+    addLine: '＋ បន្ថែមការងារផ្សេងទៀត', note: 'កំណត់សម្គាល់ (មូលហេតុឈប់ដំណើរការ)',
     submit: 'ដាក់ស្នើលទ្ធផល', submitting: 'កំពុងដាក់ស្នើ…',
     mineTitle: 'ប្រវត្តិដាក់ស្នើ', mineHint: 'នេះជាលទ្ធផលដែលបានដាក់ស្នើពីទូរស័ព្ទនេះ។ បើសរសេរខុស សូមលុប ហើយដាក់ស្នើម្ដងទៀត។',
     noServer: 'មិនទាន់ភ្ជាប់ម៉ាស៊ីនមេនៅឡើយ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។',
@@ -987,7 +987,7 @@ $('#rawTbl').addEventListener('click', async e => {
 });
 
 // 엑셀·CSV 제목 줄은 구글 시트와 맞춰 한국어로 고정
-const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','호기명','선번','LOT','생산수량','불량수량','작업시간(분)','비가동 시간','제출시각'];
+const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','호기명','선번','LOT','생산수량','불량수량','작업시간(분)','특이사항(비가동 사유)','제출시각'];
 const rowVals = r => { const w = roster().find(x => x.id === r.worker); return [r.date, r.shift, r.worker, w ? w.name : '', timeText(r), r.process, r.machine || '', r.wire || '', r.lot || '', r.qty, r.ng, minsOf(r), r.note, r.createdAt]; };
 $('#copyTsv').addEventListener('click', async () => {
   const list = flatRows(); if (!list.length) { toast(t('noCopy')); return; }
