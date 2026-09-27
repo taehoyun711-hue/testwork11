@@ -282,7 +282,7 @@ tr:last-child td{border-bottom:0}
       <button type="button" class="add-btn" id="addLine" data-i18n="addLine">＋ 다른 공정 추가</button>
 
       <div class="card">
-        <label class="row col" for="f-note"><span class="k" data-i18n="note" data-sub>특이사항</span><textarea id="f-note" placeholder="설비 고장, 자재 대기 등 (없으면 비워두세요)" data-i18n-ph="notePh"></textarea></label>
+        <label class="row col" for="f-note"><span class="k" data-i18n="note" data-sub>비가동 시간</span><textarea id="f-note"></textarea></label>
       </div>
 
       <div class="done" id="doneMsg" role="status" hidden></div>
@@ -408,7 +408,7 @@ const I18N = {
   ko: {
     admin: '관리자', workerMode: '작업자 모드', title: '실적 입력',
     name: '사번', namePh: '사번 입력 · បញ្ចូលអាយឌី', date: '날짜', shift: '근무', day: '주간', night: '야간',
-    addLine: '＋ 다른 공정 추가', note: '특이사항', notePh: '설비 고장, 자재 대기 등 (없으면 비워두세요)',
+    addLine: '＋ 다른 공정 추가', note: '비가동 시간',
     submit: '실적 제출', submitting: '제출하는 중…',
     mineTitle: '제출 내역', mineHint: '이 휴대폰에서 낸 실적이에요. 잘못 적었으면 삭제하고 다시 제출하세요.',
     noServer: '아직 서버에 연결되지 않았습니다. 관리자에게 문의하세요.',
@@ -428,7 +428,7 @@ const I18N = {
   km: {
     admin: 'អ្នកគ្រប់គ្រង', workerMode: 'សម្រាប់កម្មករ', title: 'បញ្ចូលលទ្ធផលការងារ',
     name: 'អាយឌី', namePh: 'បញ្ចូលអាយឌី', date: 'កាលបរិច្ឆេទ', shift: 'វេន', day: 'វេនថ្ងៃ', night: 'វេនយប់',
-    addLine: '＋ បន្ថែមការងារផ្សេងទៀត', note: 'កំណត់សម្គាល់', notePh: 'ម៉ាស៊ីនខូច រង់ចាំសម្ភារៈ ។ល។ (ទុកទទេ បើគ្មាន)',
+    addLine: '＋ បន្ថែមការងារផ្សេងទៀត', note: 'ពេលវេលាឈប់ដំណើរការ',
     submit: 'ដាក់ស្នើលទ្ធផល', submitting: 'កំពុងដាក់ស្នើ…',
     mineTitle: 'ប្រវត្តិដាក់ស្នើ', mineHint: 'នេះជាលទ្ធផលដែលបានដាក់ស្នើពីទូរស័ព្ទនេះ។ បើសរសេរខុស សូមលុប ហើយដាក់ស្នើម្ដងទៀត។',
     noServer: 'មិនទាន់ភ្ជាប់ម៉ាស៊ីនមេនៅឡើយ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។',
@@ -736,17 +736,13 @@ function addLine(){
   el.className = 'card line'; el.dataset.id = id;
   const last = [...$('#lines').children].pop();
   const prevProc = last ? $('#l' + last.dataset.id + '-process').value : (local.get('lastProc') || '');
-  // 앞 작업이 끝난 시각을 다음 작업의 시작으로 (11~12시, 12~1시처럼 이어서)
-  const prevEnd = last ? (normTime($('#l' + last.dataset.id + '-end').value) || '') : '';
-  // 호기는 보통 같은 기계에서 이어서 하므로 앞 작업(없으면 이 휴대폰에서 마지막에 쓴 값)을 미리 채움
-  const prevMachine = last ? $('#l' + last.dataset.id + '-machine').value.trim() : (local.get('lastMachine') || '');
   el.innerHTML = `
     <div class="card-h"><h3 class="line-no"></h3><button type="button" class="linkish rm" data-i18n="remove">${esc(t('remove'))}</button></div>
     <label class="row" for="l${id}-process"><span class="k" data-i18n="process" data-sub>${lbl('process')}</span><select id="l${id}-process">${procOptions(prevProc)}</select></label>
-    <label class="row" for="l${id}-machine"><span class="k" data-i18n="machine" data-sub>${lbl('machine')}</span><input id="l${id}-machine" autocomplete="off" spellcheck="false" maxlength="50" value="${esc(prevMachine)}"></label>
+    <label class="row" for="l${id}-machine"><span class="k" data-i18n="machine" data-sub>${lbl('machine')}</span><input id="l${id}-machine" autocomplete="off" spellcheck="false" maxlength="50"></label>
     <div class="row time-row"><span class="k"><span data-i18n="time" data-sub>${lbl('time')}</span><small class="dur" id="l${id}-dur"></small></span>
       <div class="trange">
-        <input id="l${id}-start" class="tin" inputmode="numeric" maxlength="5" autocomplete="off" value="${esc(prevEnd)}" placeholder="${esc(t('start'))}" data-i18n-ph="start" aria-label="${esc(t('start'))}">
+        <input id="l${id}-start" class="tin" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="${esc(t('start'))}" data-i18n-ph="start" aria-label="${esc(t('start'))}">
         <span class="tilde">~</span>
         <input id="l${id}-end" class="tin" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="${esc(t('end'))}" data-i18n-ph="end" aria-label="${esc(t('end'))}">
       </div>
@@ -840,7 +836,7 @@ $('#reportForm').addEventListener('submit', async e => {
   try {
     await api('submit', { key: deviceKey, report: { date, shift, worker, lines, note: $('#f-note').value.trim() } });
     local.set('workerName', worker); local.set('lastProc', lines[lines.length - 1].process);
-    local.set('lastMachine', lines[lines.length - 1].machine || '');
+    local.del('lastMachine');   // 예전 버전이 저장해 둔 호기 값 정리
     $('#lines').innerHTML = ''; addLine(); $('#f-note').value = '';
     const dm = $('#doneMsg'); dm.textContent = t('done', { name: worker, t: nowText().slice(11) }); dm.hidden = false;
     clearTimeout(dm._t); dm._t = setTimeout(() => dm.hidden = true, 6000);
@@ -991,7 +987,7 @@ $('#rawTbl').addEventListener('click', async e => {
 });
 
 // 엑셀·CSV 제목 줄은 구글 시트와 맞춰 한국어로 고정
-const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','호기명','선번','LOT','생산수량','불량수량','작업시간(분)','특이사항','제출시각'];
+const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','호기명','선번','LOT','생산수량','불량수량','작업시간(분)','비가동 시간','제출시각'];
 const rowVals = r => { const w = roster().find(x => x.id === r.worker); return [r.date, r.shift, r.worker, w ? w.name : '', timeText(r), r.process, r.machine || '', r.wire || '', r.lot || '', r.qty, r.ng, minsOf(r), r.note, r.createdAt]; };
 $('#copyTsv').addEventListener('click', async () => {
   const list = flatRows(); if (!list.length) { toast(t('noCopy')); return; }
