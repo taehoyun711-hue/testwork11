@@ -419,7 +419,7 @@ const I18N = {
     needName: '사번을 입력하세요', needDate: '날짜를 선택하세요', needProc: '작업 {n}의 공정을 선택하세요',
     needTime: '작업 {n}의 시작·종료 시각을 모두 고르세요', needQty: '생산수량을 하나 이상 입력하세요',
     done: '사번 {name} 실적이 제출됐어요 ({t})', sent: '실적을 제출했습니다',
-    del: '삭제', delSure: '정말 삭제', deleted: '삭제했습니다', mineSub: '생산 {q} · {t} 제출',
+    del: '삭제', deleted: '삭제했습니다', mineSub: '생산 {q} · {t} 제출',
     dateFmt: d => (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + '일월화수목금토'[d.getDay()] + '요일',
     err_network: '인터넷 연결을 확인하고 다시 시도하세요', err_forbidden: '다른 휴대폰에서 낸 실적은 관리자만 지울 수 있어요',
     err_bad_request: '입력 내용을 다시 확인하세요', err_no_server: '아직 서버에 연결되지 않았습니다',
@@ -439,7 +439,7 @@ const I18N = {
     needName: 'សូមបញ្ចូលអាយឌី', needDate: 'សូមជ្រើសរើសកាលបរិច្ឆេទ', needProc: 'សូមជ្រើសរើសផ្នែក សម្រាប់ការងារទី {n}',
     needTime: 'សូមជ្រើសរើសម៉ោងចាប់ផ្ដើម និងម៉ោងបញ្ចប់ សម្រាប់ការងារទី {n}', needQty: 'សូមបញ្ចូលចំនួនផលិតយ៉ាងហោចណាស់មួយ',
     done: 'អាយឌី {name} បានដាក់ស្នើលទ្ធផលរួចរាល់ ({t})', sent: 'បានដាក់ស្នើរួចរាល់',
-    del: 'លុប', delSure: 'ពិតជាលុប?', deleted: 'បានលុបរួចរាល់', mineSub: 'ផលិត {q} · ដាក់ស្នើម៉ោង {t}',
+    del: 'លុប', deleted: 'បានលុបរួចរាល់', mineSub: 'ផលិត {q} · ដាក់ស្នើម៉ោង {t}',
     dateFmt: d => 'ថ្ងៃ' + ['អាទិត្យ', 'ច័ន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ៍', 'សុក្រ', 'សៅរ៍'][d.getDay()] + ' ' + d.getDate() + '/' + (d.getMonth() + 1),
     err_network: 'សូមពិនិត្យអ៊ីនធឺណិត ហើយព្យាយាមម្ដងទៀត', err_forbidden: 'លទ្ធផលពីទូរស័ព្ទផ្សេង មានតែអ្នកគ្រប់គ្រងទេដែលអាចលុបបាន',
     err_bad_request: 'សូមពិនិត្យព័ត៌មានដែលបានបញ្ចូលម្ដងទៀត', err_no_server: 'មិនទាន់ភ្ជាប់ម៉ាស៊ីនមេនៅឡើយ',
@@ -869,8 +869,9 @@ async function loadMine(){
     row.innerHTML = `<div><div>${esc(g[0].worker)} · ${esc(shiftTxt)} · ${g.map(r => esc(r.process)).join(', ')}</div><div class="sub num">${esc(times ? times + ' · ' : '')}${esc(t('mineSub', { q: fmt(qty), t: String(g[0].createdAt).slice(11, 16) }))}</div></div>`;
     const del = document.createElement('button'); del.type = 'button'; del.className = 'btn small danger'; del.textContent = t('del');
     del.addEventListener('click', async () => {
-      if (del.dataset.arm !== '1') { del.dataset.arm = '1'; del.textContent = t('delSure'); return; }
-      try { await api('removeMine', { id, key: deviceKey }); toast(t('deleted')); loadMine(); } catch(e) { toast(errText(e)); }
+      del.disabled = true;   // 한 번 누르면 바로 삭제 (두 번 눌려도 한 번만 처리)
+      try { await api('removeMine', { id, key: deviceKey }); toast(t('deleted')); loadMine(); }
+      catch(e) { del.disabled = false; toast(errText(e)); }
     });
     row.appendChild(del); box.appendChild(row);
   }
@@ -983,9 +984,10 @@ function renderAdmin(){
 }
 
 $('#rawTbl').addEventListener('click', async e => {
-  const b = e.target.closest('[data-del]'); if (!b) return;
-  if (b.dataset.arm !== '1') { b.dataset.arm = '1'; b.textContent = t('delSure'); return; }
-  try { await adminApi('remove', { id: b.dataset.del }); toast(t('rowDeleted')); loadAdmin(); } catch(err) { toast(errText(err)); }
+  const b = e.target.closest('[data-del]'); if (!b || b.disabled) return;
+  b.disabled = true;   // 한 번 누르면 바로 삭제
+  try { await adminApi('remove', { id: b.dataset.del }); toast(t('rowDeleted')); loadAdmin(); }
+  catch(err) { b.disabled = false; toast(errText(err)); }
 });
 
 // 엑셀·CSV 제목 줄은 구글 시트와 맞춰 한국어로 고정
@@ -1019,9 +1021,6 @@ $('#saveCfg').addEventListener('click', async () => {
   catch(e) { toast(errText(e)); }
 });
 $('#clearDemo').addEventListener('click', () => {
-  const b = $('#clearDemo');
-  if (b.dataset.arm !== '1') { b.dataset.arm = '1'; b.textContent = '한 번 더 누르면 지웁니다'; return; }
-  b.dataset.arm = ''; b.textContent = '연습 데이터 지우기';
   local.set('demo-rows', '[]'); rows = []; renderAdmin(); loadMine(); toast('연습 데이터를 지웠습니다');
 });
 
