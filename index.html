@@ -341,7 +341,7 @@ tr:last-child td{border-bottom:0}
     <div class="sheet">
       <div class="panel">
         <label class="fld"><span data-i18n="procListLabel">공정 목록 (한 줄에 하나)</span><textarea id="s-procs" rows="7"></textarea></label>
-        <label class="fld"><span data-i18n="rosterLabel">사번 명단 (한 줄에 한 명: 사번 이름, 비워도 됨)</span><textarea id="s-workers" rows="7" data-i18n-ph="rosterPh" placeholder="예)&#10;1023 김철수&#10;1024 Sokha&#10;명단을 넣으면 현황에 이름이 같이 보이고 미제출자를 알려줍니다."></textarea></label>
+        <label class="fld"><span data-i18n="rosterLabel">사번 명단 (한 줄에 한 명: 사번 이름, 비워도 됨)</span><textarea id="s-workers" rows="7"></textarea></label>
         <button type="button" class="btn primary" id="saveCfg" data-i18n="saveCfg">설정 저장</button>
       </div>
       <p class="hint" data-i18n="pwHint">관리자 아이디·비밀번호는 구글 시트의 ‘관리자’ 탭에서 바꿀 수 있어요.</p>
@@ -470,7 +470,6 @@ Object.assign(I18N.ko, {
   noCopy: '복사할 기록이 없습니다', copiedN: '{n}줄을 복사했습니다. 엑셀에 붙여넣으세요', copied: '복사했습니다. 엑셀에 붙여넣으세요',
   copyFail: '복사하지 못했습니다. CSV 저장을 이용하세요', noSave: '저장할 기록이 없습니다', rowDeleted: '실적 한 건을 삭제했습니다',
   procListLabel: '공정 목록 (한 줄에 하나)', rosterLabel: '사번 명단 (한 줄에 한 명: 사번 이름, 비워도 됨)',
-  rosterPh: '예)\n1023 김철수\n1024 Sokha\n명단을 넣으면 현황에 이름이 같이 보이고 미제출자를 알려줍니다.',
   saveCfg: '설정 저장', pwHint: '관리자 아이디·비밀번호는 구글 시트의 ‘관리자’ 탭에서 바꿀 수 있어요.',
   needProcCfg: '공정을 하나 이상 입력하세요', cfgSaved: '설정을 저장했습니다'
 });
@@ -490,7 +489,6 @@ Object.assign(I18N.km, {
   noCopy: 'មិនមានទិន្នន័យសម្រាប់ចម្លង', copiedN: 'បានចម្លង {n} ជួរ។ សូមបិទភ្ជាប់ក្នុង Excel', copied: 'បានចម្លង។ សូមបិទភ្ជាប់ក្នុង Excel',
   copyFail: 'មិនអាចចម្លងបានទេ។ សូមប្រើការរក្សាទុក CSV', noSave: 'មិនមានទិន្នន័យសម្រាប់រក្សាទុក', rowDeleted: 'បានលុបលទ្ធផលមួយ',
   procListLabel: 'បញ្ជីផ្នែក (មួយបន្ទាត់ មួយផ្នែក)', rosterLabel: 'បញ្ជីអាយឌី (មួយបន្ទាត់ម្នាក់៖ អាយឌី ឈ្មោះ · អាចទុកទទេ)',
-  rosterPh: 'ឧ.\n1023 Kim\n1024 Sokha\nបើបញ្ចូលបញ្ជី ឈ្មោះនឹងបង្ហាញជាមួយ ហើយអាចដឹងអ្នកមិនទាន់ដាក់ស្នើ។',
   saveCfg: 'រក្សាទុកការកំណត់', pwHint: 'អាចប្ដូរអាយឌី និងពាក្យសម្ងាត់អ្នកគ្រប់គ្រង នៅផ្ទាំង ‘관리자’ ក្នុង Google Sheets។',
   needProcCfg: 'សូមបញ្ចូលផ្នែកយ៉ាងហោចណាស់មួយ', cfgSaved: 'បានរក្សាទុកការកំណត់'
 });
@@ -735,10 +733,9 @@ function addLine(){
   const el = document.createElement('div');
   el.className = 'card line'; el.dataset.id = id;
   const last = [...$('#lines').children].pop();
-  const prevProc = last ? $('#l' + last.dataset.id + '-process').value : (local.get('lastProc') || '');
   el.innerHTML = `
     <div class="card-h"><h3 class="line-no"></h3><button type="button" class="linkish rm" data-i18n="remove">${esc(t('remove'))}</button></div>
-    <label class="row" for="l${id}-process"><span class="k" data-i18n="process" data-sub>${lbl('process')}</span><select id="l${id}-process">${procOptions(prevProc)}</select></label>
+    <label class="row" for="l${id}-process"><span class="k" data-i18n="process" data-sub>${lbl('process')}</span><select id="l${id}-process">${procOptions('')}</select></label>
     <label class="row" for="l${id}-machine"><span class="k" data-i18n="machine" data-sub>${lbl('machine')}</span><input id="l${id}-machine" autocomplete="off" spellcheck="false" maxlength="50"></label>
     <div class="row time-row"><span class="k"><span data-i18n="time" data-sub>${lbl('time')}</span><small class="dur" id="l${id}-dur"></small></span>
       <div class="trange">
@@ -835,7 +832,8 @@ $('#reportForm').addEventListener('submit', async e => {
   const btn = $('#submitBtn'); btn.disabled = true; btn.textContent = t('submitting');
   try {
     await api('submit', { key: deviceKey, report: { date, shift, worker, lines, note: $('#f-note').value.trim() } });
-    local.set('workerName', worker); local.set('lastProc', lines[lines.length - 1].process);
+    local.set('workerName', worker);
+    local.del('lastProc');   // 예전 버전이 저장해 둔 공정 값 정리
     local.del('lastMachine');   // 예전 버전이 저장해 둔 호기 값 정리
     $('#lines').innerHTML = ''; addLine(); $('#f-note').value = '';
     const dm = $('#doneMsg'); dm.textContent = t('done', { name: worker, t: nowText().slice(11) }); dm.hidden = false;
