@@ -448,10 +448,10 @@ const I18N = {
 };
 // 작업 칸에 추가된 항목: 호기명 · 선번 · LOT
 Object.assign(I18N.ko, {
-  machine: '호기명', machinePh: '예: 3호기', wire: '선번', wirePh: '선번 입력', lot: 'LOT', lotPh: 'LOT 번호'
+  machine: '호기명', wire: '선번', wirePh: '선번 입력', lot: 'LOT', lotPh: 'LOT 번호'
 });
 Object.assign(I18N.km, {
-  machine: 'ម៉ាស៊ីន', machinePh: 'ឧ. 3호기', wire: 'លេខខ្សែ', wirePh: 'បញ្ចូលលេខខ្សែ', lot: 'លេខ LOT', lotPh: 'បញ្ចូលលេខ LOT'
+  machine: 'ម៉ាស៊ីន', wire: 'លេខខ្សែ', wirePh: 'បញ្ចូលលេខខ្សែ', lot: 'លេខ LOT', lotPh: 'បញ្ចូលលេខ LOT'
 });
 // 관리자 화면 (로그인 · 공정별 현황 · 설정)
 Object.assign(I18N.ko, {
@@ -743,7 +743,7 @@ function addLine(){
   el.innerHTML = `
     <div class="card-h"><h3 class="line-no"></h3><button type="button" class="linkish rm" data-i18n="remove">${esc(t('remove'))}</button></div>
     <label class="row" for="l${id}-process"><span class="k" data-i18n="process" data-sub>${lbl('process')}</span><select id="l${id}-process">${procOptions(prevProc)}</select></label>
-    <label class="row" for="l${id}-machine"><span class="k" data-i18n="machine" data-sub>${lbl('machine')}</span><input id="l${id}-machine" autocomplete="off" spellcheck="false" maxlength="50" value="${esc(prevMachine)}" placeholder="${esc(t('machinePh'))}" data-i18n-ph="machinePh"></label>
+    <label class="row" for="l${id}-machine"><span class="k" data-i18n="machine" data-sub>${lbl('machine')}</span><input id="l${id}-machine" autocomplete="off" spellcheck="false" maxlength="50" value="${esc(prevMachine)}"></label>
     <div class="row time-row"><span class="k"><span data-i18n="time" data-sub>${lbl('time')}</span><small class="dur" id="l${id}-dur"></small></span>
       <div class="trange">
         <input id="l${id}-start" class="tin" inputmode="numeric" maxlength="5" autocomplete="off" value="${esc(prevEnd)}" placeholder="${esc(t('start'))}" data-i18n-ph="start" aria-label="${esc(t('start'))}">
