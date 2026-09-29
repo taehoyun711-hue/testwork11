@@ -388,13 +388,32 @@ function toast(msg){ const t = $('#toast'); t.textContent = msg; t.hidden = fals
 
 /* ---------- 서버 연결 (구글 Apps Script) ---------- */
 let auth = null;   // 관리자 { user, pass }
+// 연결이 가끔 끊기거나(ERR_CONNECTION_RESET) 응답이 멈출 때, 여러 번 보내도 결과가 같은 요청은 자동으로 다시 시도.
+// 실적 제출(submit)은 두 번 저장될 수 있어서 다시 시도하지 않음.
+const RETRY_SAFE = new Set(['config', 'mine', 'removeMine', 'login', 'list', 'remove', 'saveConfig']);
+const RETRY_TRIES = 3, RETRY_TIMEOUT_MS = 30000;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function postOnce(body, timeoutMs){
+  if (!timeoutMs) return fetch(API_URL, { method: 'POST', body });
+  const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try { return await fetch(API_URL, { method: 'POST', body, signal: ctrl.signal }); }
+  finally { clearTimeout(timer); }
+}
 async function api(action, payload, useAuth){
   const body = Object.assign({ action }, useAuth && auth ? auth : {}, payload || {});
   if (DEMO) return demoApi(body);
   if (!API_URL) throw { code: 'no_server' };
+  const safe = RETRY_SAFE.has(action), tries = safe ? RETRY_TRIES : 1, text = JSON.stringify(body);
   let res;
-  try { res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(body) }); }
-  catch(e) { throw { code: 'network' }; }
+  for (let i = 1; i <= tries; i++) {
+    try {
+      res = await postOnce(text, safe ? RETRY_TIMEOUT_MS : 0);
+      if (res.ok || i === tries) break;
+    } catch(e) {
+      if (i === tries) throw { code: 'network' };
+    }
+    await sleep(1000 * i);
+  }
   let j; try { j = await res.json(); } catch(e) { throw { code: 'server_error' }; }
   if (!j.ok) throw { code: j.error || 'server_error', message: j.message };
   return j.data;
