@@ -181,11 +181,10 @@ html[lang="km"] .btn.primary{font-size:17px}
 .panel .fld input,.panel .fld select,.panel .fld textarea{background:var(--fill);box-shadow:none}
 .fld textarea{min-height:84px;resize:vertical}
 .filters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .kpi{background:var(--card);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow)}
 .kpi .k{font-size:14px;color:var(--ink-3);font-weight:500}
 .kpi .v{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.3;margin-top:2px}
-.kpi .v.ng{color:var(--ng)}
 .kpi .s{font-size:13px;color:var(--ink-3)}
 .missing{padding:14px 16px;border-radius:var(--r-s);background:var(--warn-soft);color:var(--warn);font-size:15px;font-weight:500}
 .missing.ok{background:var(--ok-soft);color:var(--ok)}
@@ -194,7 +193,6 @@ html[lang="km"] .btn.primary{font-size:17px}
 .proc-head h3{margin:0;font-size:18px;font-weight:700}
 .proc-stats{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;color:var(--ink-3)}
 .proc-stats b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
-.proc-stats .ngv{color:var(--ng)}
 .tbl-wrap{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:15px}
 th,td{text-align:left;padding:12px 20px;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -206,7 +204,6 @@ tr:last-child td{border-bottom:0}
 .bar{height:8px;border-radius:99px;background:var(--bar);position:relative;overflow:hidden}
 .bar i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--accent)}
 .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:1px;background:var(--warn-soft);color:var(--warn)}
-.ngtxt{color:var(--ng)}
 .muted{color:var(--ink-3)}
 .empty{padding:36px 16px;text-align:center;color:var(--ink-3);background:var(--card);border-radius:var(--r)}
 .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -218,7 +215,8 @@ tr:last-child td{border-bottom:0}
 
 @media (max-width:640px){
   .filters{grid-template-columns:1fr 1fr}
-  .kpis{grid-template-columns:1fr 1fr}
+  .kpis{gap:8px}
+  .kpi{padding:12px 12px}
   .kpi .v{font-size:23px}
   .who{display:none}
   th,td{padding-inline:14px}
@@ -376,7 +374,6 @@ const nowText = () => { const d = new Date(); return today() + ' ' + pad(d.getHo
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const n = v => { const x = parseFloat(v); return isFinite(x) && x > 0 ? x : 0; };
 const fmt = v => Math.round(v).toLocaleString('ko-KR');
-const pct = (ng, qty) => (qty + ng) > 0 ? (ng / (qty + ng) * 100).toFixed(2) + '%' : '–';
 const rid = () => Math.random().toString(36).slice(2, 10);
 
 // 이 휴대폰을 구별하는 키: 내가 낸 실적만 다시 보고 지울 수 있게
@@ -432,7 +429,7 @@ const I18N = {
     mineTitle: '제출 내역', mineHint: '이 휴대폰에서 낸 실적이에요. 잘못 적었으면 삭제하고 다시 제출하세요.',
     noServer: '아직 서버에 연결되지 않았습니다. 관리자에게 문의하세요.',
     line: '작업 {n}', remove: '빼기', process: '공정', pickProc: '공정 선택',
-    qty: '생산수량', ng: '불량', ea: '개', time: '작업시간', start: '시작', end: '종료', dur: '{m}분',
+    qty: '생산수량', ea: '개', time: '작업시간', start: '시작', end: '종료', dur: '{m}분',
     nightRule: '야간조는 {n}일 07:00 이전 작업까지 {d}일 작업으로 기록돼요',
     autoNight: '07시 이전이라 {d}일 야간조 작업으로 맞췄어요', needTimeFmt: '작업 {n}의 시각을 11:25처럼 적어 주세요',
     needName: '사번을 입력하세요', needDate: '날짜를 선택하세요', needProc: '작업 {n}의 공정을 선택하세요',
@@ -452,7 +449,7 @@ const I18N = {
     mineTitle: 'ប្រវត្តិដាក់ស្នើ', mineHint: 'នេះជាលទ្ធផលដែលបានដាក់ស្នើពីទូរស័ព្ទនេះ។ បើសរសេរខុស សូមលុប ហើយដាក់ស្នើម្ដងទៀត។',
     noServer: 'មិនទាន់ភ្ជាប់ម៉ាស៊ីនមេនៅឡើយ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។',
     line: 'ការងារទី {n}', remove: 'ដកចេញ', process: 'ផ្នែក', pickProc: 'ជ្រើសរើសផ្នែក',
-    qty: 'ចំនួនផលិត', ng: 'ចំនួនខូច', ea: 'គ្រឿង', time: 'ម៉ោងធ្វើការ', start: 'ចាប់ផ្ដើម', end: 'បញ្ចប់', dur: '{m} នាទី',
+    qty: 'ចំនួនផលិត', ea: 'គ្រឿង', time: 'ម៉ោងធ្វើការ', start: 'ចាប់ផ្ដើម', end: 'បញ្ចប់', dur: '{m} នាទី',
     nightRule: 'វេនយប់៖ ការងាររហូតដល់មុនម៉ោង 07:00 ថ្ងៃទី {n} ត្រូវកត់ត្រាជាការងារថ្ងៃទី {d}',
     autoNight: 'ដោយសារមុនម៉ោង 07:00 បានកំណត់ជាការងារវេនយប់ ថ្ងៃទី {d}', needTimeFmt: 'សូមសរសេរម៉ោងសម្រាប់ការងារទី {n} ដូចជា 11:25',
     needName: 'សូមបញ្ចូលអាយឌី', needDate: 'សូមជ្រើសរើសកាលបរិច្ឆេទ', needProc: 'សូមជ្រើសរើសផ្នែក សម្រាប់ការងារទី {n}',
@@ -480,10 +477,10 @@ Object.assign(I18N.ko, {
   err_bad_login: '아이디 또는 비밀번호가 맞지 않습니다', err_locked: '비밀번호를 여러 번 틀렸습니다. 5분 뒤에 다시 시도하세요',
   logout: '로그아웃', who: '{name} 님', tabStatus: '공정별 현황', tabSettings: '설정',
   fromDate: '시작일', toDate: '종료일', shiftF: '근무조', all: '전체', allProc: '전체 공정', refresh: '새로고침', asOf: '{t} 기준',
-  kpiQty: '총 생산', kpiNg: '총 불량', kpiRate: '불량률 {v}', kpiMins: '작업시간 합계', kpiMinsSub: '분 · UPH {v}',
+  kpiQty: '총 생산', kpiMins: '작업시간 합계', kpiMinsSub: '분 · UPH {v}',
   kpiPeople: '제출 인원', kpiOf: '명단 {n}명 중', kpiPeopleU: '명',
   missing: '미제출 {n}명: {list}', allDone: '명단의 모든 작업자가 제출했습니다', noData: '이 기간에 입력된 실적이 없습니다',
-  stQty: '생산', stNg: '불량', stRate: '불량률', stWork: '작업', minU: '분', stPeople: '인원',
+  stQty: '생산', stWork: '작업', minU: '분', stPeople: '인원',
   thId: '사번', thMins: '작업(분)', thMachine: '호기', thShift: '조', thSubmitted: '제출', example: '예시',
   history: '실적 이력', copyTsv: '엑셀에 붙여넣기용 복사', saveCsv: 'CSV 파일 저장', noRows: '표시할 기록이 없습니다',
   noCopy: '복사할 기록이 없습니다', copiedN: '{n}줄을 복사했습니다. 엑셀에 붙여넣으세요', copied: '복사했습니다. 엑셀에 붙여넣으세요',
@@ -499,10 +496,10 @@ Object.assign(I18N.km, {
   err_bad_login: 'អាយឌី ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ', err_locked: 'បានបញ្ចូលពាក្យសម្ងាត់ខុសច្រើនដង។ សូមព្យាយាមម្ដងទៀតក្រោយ 5 នាទី',
   logout: 'ចាកចេញ', who: '{name}', tabStatus: 'ស្ថានភាពតាមផ្នែក', tabSettings: 'ការកំណត់',
   fromDate: 'ថ្ងៃចាប់ផ្ដើម', toDate: 'ថ្ងៃបញ្ចប់', shiftF: 'វេន', all: 'ទាំងអស់', allProc: 'ផ្នែកទាំងអស់', refresh: 'ផ្ទុកឡើងវិញ', asOf: 'គិតត្រឹមម៉ោង {t}',
-  kpiQty: 'ផលិតសរុប', kpiNg: 'ខូចសរុប', kpiRate: 'អត្រាខូច {v}', kpiMins: 'ម៉ោងធ្វើការសរុប', kpiMinsSub: 'នាទី · UPH {v}',
+  kpiQty: 'ផលិតសរុប', kpiMins: 'ម៉ោងធ្វើការសរុប', kpiMinsSub: 'នាទី · UPH {v}',
   kpiPeople: 'អ្នកដាក់ស្នើ', kpiOf: 'ក្នុងចំណោម {n} នាក់', kpiPeopleU: 'នាក់',
   missing: 'មិនទាន់ដាក់ស្នើ {n} នាក់៖ {list}', allDone: 'កម្មករទាំងអស់ក្នុងបញ្ជីបានដាក់ស្នើរួចហើយ', noData: 'មិនមានលទ្ធផលក្នុងរយៈពេលនេះទេ',
-  stQty: 'ផលិត', stNg: 'ខូច', stRate: 'អត្រាខូច', stWork: 'ធ្វើការ', minU: ' នាទី', stPeople: 'ចំនួននាក់',
+  stQty: 'ផលិត', stWork: 'ធ្វើការ', minU: ' នាទី', stPeople: 'ចំនួននាក់',
   thId: 'អាយឌី', thMins: 'ធ្វើការ (នាទី)', thMachine: 'ម៉ាស៊ីន', thShift: 'វេន', thSubmitted: 'ដាក់ស្នើ', example: 'ឧទាហរណ៍',
   history: 'ប្រវត្តិលទ្ធផល', copyTsv: 'ចម្លងសម្រាប់ Excel', saveCsv: 'រក្សាទុកជាឯកសារ CSV', noRows: 'មិនមានទិន្នន័យ',
   noCopy: 'មិនមានទិន្នន័យសម្រាប់ចម្លង', copiedN: 'បានចម្លង {n} ជួរ។ សូមបិទភ្ជាប់ក្នុង Excel', copied: 'បានចម្លង។ សូមបិទភ្ជាប់ក្នុង Excel',
@@ -765,8 +762,7 @@ function addLine(){
     </div>
     <label class="row" for="l${id}-wire"><span class="k" data-i18n="wire" data-sub>${lbl('wire')}</span><input id="l${id}-wire" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="50" placeholder="${esc(t('wirePh'))}" data-i18n-ph="wirePh"></label>
     <label class="row" for="l${id}-lot"><span class="k" data-i18n="lot" data-sub>${lbl('lot')}</span><input id="l${id}-lot" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="50" placeholder="${esc(t('lotPh'))}" data-i18n-ph="lotPh"></label>
-    <label class="row" for="l${id}-qty"><span class="k" data-i18n="qty" data-sub>${lbl('qty')}</span><input id="l${id}-qty" class="numin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><span class="u" data-i18n="ea">${esc(t('ea'))}</span></label>
-    <label class="row" for="l${id}-ng"><span class="k" data-i18n="ng" data-sub>${lbl('ng')}</span><input id="l${id}-ng" class="numin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><span class="u" data-i18n="ea">${esc(t('ea'))}</span></label>`;
+    <label class="row" for="l${id}-qty"><span class="k" data-i18n="qty" data-sub>${lbl('qty')}</span><input id="l${id}-qty" class="numin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><span class="u" data-i18n="ea">${esc(t('ea'))}</span></label>`;
   el.querySelector('.rm').addEventListener('click', () => { el.remove(); renumber(); });
   // 칸을 벗어나면 11:25 형태로 정리하고 작업시간 계산
   el.querySelectorAll('.tin').forEach(inp => {
@@ -836,11 +832,10 @@ $('#reportForm').addEventListener('submit', async e => {
       wire: $('#l' + id + '-wire').value.trim(),
       lot: $('#l' + id + '-lot').value.trim(),
       qty: n($('#l' + id + '-qty').value),
-      ng: n($('#l' + id + '-ng').value),
       start: tm.start || '', end: tm.end || '',
       mins: spanMins(tm.start, tm.end)
     };
-    if (!l.qty && !l.ng) continue;
+    if (!l.qty) continue;
     if (!l.process) { toast(t('needProc', { n: no })); return; }
     if (tm.start === null || tm.end === null) { toast(t('needTimeFmt', { n: no })); return; }
     if (!!l.start !== !!l.end) { toast(t('needTime', { n: no })); return; }
@@ -928,14 +923,13 @@ function flatRows(){
 
 function renderAdmin(){
   const list = flatRows();
-  const qty = list.reduce((a, r) => a + r.qty, 0), ng = list.reduce((a, r) => a + r.ng, 0), mins = list.reduce((a, r) => a + minsOf(r), 0);
+  const qty = list.reduce((a, r) => a + r.qty, 0), mins = list.reduce((a, r) => a + minsOf(r), 0);
   const uph = (q, m) => m ? fmt(q / (m / 60)) : '–';   // UPH = 시간당 생산량
   const people = new Set(list.map(r => r.worker));
   const T = k => esc(t(k));
   const pill = on => on ? `<span class="pill">${T('example')}</span>` : '';
   $('#kpis').innerHTML = `
     <div class="kpi"><div class="k">${T('kpiQty')}</div><div class="v">${fmt(qty)}</div><div class="s">EA</div></div>
-    <div class="kpi"><div class="k">${T('kpiNg')}</div><div class="v ng">${fmt(ng)}</div><div class="s">${esc(t('kpiRate', { v: pct(ng, qty) }))}</div></div>
     <div class="kpi"><div class="k">${T('kpiMins')}</div><div class="v">${fmt(mins)}</div><div class="s">${esc(t('kpiMinsSub', { v: uph(qty, mins) }))}</div></div>
     <div class="kpi"><div class="k">${T('kpiPeople')}</div><div class="v">${people.size}</div><div class="s">${esc(cfg.workers.length ? t('kpiOf', { n: cfg.workers.length }) : t('kpiPeopleU'))}</div></div>`;
 
@@ -951,8 +945,8 @@ function renderAdmin(){
   for (const r of list) {
     if (!byProc.has(r.process)) byProc.set(r.process, new Map());
     const w = byProc.get(r.process);
-    if (!w.has(r.worker)) w.set(r.worker, { qty: 0, ng: 0, mins: 0, machines: new Set(), example: false });
-    const a = w.get(r.worker); a.qty += r.qty; a.ng += r.ng; a.mins += minsOf(r);
+    if (!w.has(r.worker)) w.set(r.worker, { qty: 0, mins: 0, machines: new Set(), example: false });
+    const a = w.get(r.worker); a.qty += r.qty; a.mins += minsOf(r);
     if (r.machine) a.machines.add(r.machine); a.example = a.example || !!r.example;
   }
   const order = cfg.processes;
@@ -963,19 +957,18 @@ function renderAdmin(){
   } else {
     pl.innerHTML = procs.map(p => {
       const ws = [...byProc.get(p).entries()].sort((a, b) => b[1].qty - a[1].qty);
-      const pq = ws.reduce((s, [, a]) => s + a.qty, 0), pn = ws.reduce((s, [, a]) => s + a.ng, 0), pm = ws.reduce((s, [, a]) => s + a.mins, 0);
+      const pq = ws.reduce((s, [, a]) => s + a.qty, 0), pm = ws.reduce((s, [, a]) => s + a.mins, 0);
       const max = Math.max(1, ...ws.map(([, a]) => a.qty));
       return `<article class="proc">
         <div class="proc-head"><h3>${esc(p)}</h3>
-          <div class="proc-stats"><span>${T('stQty')} <b>${fmt(pq)}</b></span><span>${T('stNg')} <b class="ngv">${fmt(pn)}</b></span><span>${T('stRate')} <b>${pct(pn, pq)}</b></span><span>${T('stWork')} <b>${fmt(pm)}</b>${T('minU')}</span><span>UPH <b>${uph(pq, pm)}</b></span><span>${T('stPeople')} <b>${ws.length}</b></span></div>
+          <div class="proc-stats"><span>${T('stQty')} <b>${fmt(pq)}</b></span><span>${T('stWork')} <b>${fmt(pm)}</b>${T('minU')}</span><span>UPH <b>${uph(pq, pm)}</b></span><span>${T('stPeople')} <b>${ws.length}</b></span></div>
         </div>
         <div class="tbl-wrap"><table>
-          <thead><tr><th>${T('thId')}</th><th class="barcell"></th><th class="r">${T('stQty')}</th><th class="r">${T('stNg')}</th><th class="r">${T('thMins')}</th><th class="r">UPH</th><th>${T('thMachine')}</th></tr></thead>
+          <thead><tr><th>${T('thId')}</th><th class="barcell"></th><th class="r">${T('stQty')}</th><th class="r">${T('thMins')}</th><th class="r">UPH</th><th>${T('thMachine')}</th></tr></thead>
           <tbody>${ws.map(([name, a]) => `<tr>
             <td>${esc(whoOf(name))}${pill(a.example)}</td>
             <td class="barcell"><div class="bar"><i style="width:${(a.qty / max * 100).toFixed(1)}%"></i></div></td>
             <td class="r num">${fmt(a.qty)}</td>
-            <td class="r num ${a.ng ? 'ngtxt' : 'muted'}">${fmt(a.ng)}</td>
             <td class="r num">${a.mins ? fmt(a.mins) : '–'}</td>
             <td class="r num">${uph(a.qty, a.mins)}</td>
             <td class="muted">${[...a.machines].map(esc).join(', ') || '–'}</td></tr>`).join('')}</tbody>
@@ -986,12 +979,12 @@ function renderAdmin(){
   const tbl = $('#rawTbl');
   if (!list.length) { tbl.innerHTML = `<tbody><tr><td class="muted">${T('noRows')}</td></tr></tbody>`; return; }
   const dash = v => esc(v) || '<span class="muted">–</span>';
-  tbl.innerHTML = `<thead><tr><th>${T('date')}</th><th>${T('thShift')}</th><th>${T('thId')}</th><th>${T('time')}</th><th>${T('process')}</th><th>${T('thMachine')}</th><th>${T('wire')}</th><th>${T('lot')}</th><th class="r">${T('stQty')}</th><th class="r">${T('stNg')}</th><th class="r">${T('thMins')}</th><th>${T('note')}</th><th>${T('thSubmitted')}</th><th></th></tr></thead>
+  tbl.innerHTML = `<thead><tr><th>${T('date')}</th><th>${T('thShift')}</th><th>${T('thId')}</th><th>${T('time')}</th><th>${T('process')}</th><th>${T('thMachine')}</th><th>${T('wire')}</th><th>${T('lot')}</th><th class="r">${T('stQty')}</th><th class="r">${T('thMins')}</th><th>${T('note')}</th><th>${T('thSubmitted')}</th><th></th></tr></thead>
     <tbody>${list.map(r => `<tr>
       <td class="num">${esc(r.date.slice(5))}</td><td>${esc(shiftText(r.shift))}</td><td>${esc(whoOf(r.worker))}${pill(r.example)}</td>
       <td class="num">${dash(timeText(r))}</td>
       <td>${esc(r.process)}</td><td>${dash(r.machine)}</td><td class="num">${dash(r.wire)}</td><td class="num">${dash(r.lot)}</td>
-      <td class="r num">${fmt(r.qty)}</td><td class="r num ${r.ng ? 'ngtxt' : 'muted'}">${fmt(r.ng)}</td><td class="r num">${minsOf(r) ? fmt(minsOf(r)) : '–'}</td>
+      <td class="r num">${fmt(r.qty)}</td><td class="r num">${minsOf(r) ? fmt(minsOf(r)) : '–'}</td>
       <td class="muted">${esc(r.note)}</td><td class="num muted">${esc(String(r.createdAt).slice(11, 16))}</td>
       <td><button type="button" class="btn small danger" data-del="${esc(r.id)}">${T('del')}</button></td></tr>`).join('')}</tbody>`;
 }
@@ -1004,11 +997,11 @@ $('#rawTbl').addEventListener('click', async e => {
 });
 
 // 엑셀·CSV 제목 줄은 구글 시트와 맞춰 한국어로 고정
-const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','호기명','선번','LOT','생산수량','불량수량','작업시간(분)','특이사항(비가동 사유)','제출시각'];
-const rowVals = r => { const w = roster().find(x => x.id === r.worker); return [r.date, r.shift, r.worker, w ? w.name : '', timeText(r), r.process, r.machine || '', r.wire || '', r.lot || '', r.qty, r.ng, minsOf(r), r.note, r.createdAt]; };
+const HEAD = ['날짜','근무조','사번','이름','작업시간대','공정','호기명','선번','LOT','생산수량','작업시간(분)','특이사항(비가동 사유)','제출시각'];
+const rowVals = r => { const w = roster().find(x => x.id === r.worker); return [r.date, r.shift, r.worker, w ? w.name : '', timeText(r), r.process, r.machine || '', r.wire || '', r.lot || '', r.qty, minsOf(r), r.note, r.createdAt]; };
 // CSV 저장 순서: 사번, 호기, 주/야, 작업시간(분), 생산수량 먼저, 나머지는 뒤에
-const CSV_HEAD = ['사번','호기','주/야','작업시간','생산수량','날짜','이름','공정','선번','LOT','불량수량','특이사항(비가동 사유)','제출시각'];
-const csvVals = r => { const w = roster().find(x => x.id === r.worker); return [r.worker, r.machine || '', r.shift, minsOf(r), r.qty, r.date, w ? w.name : '', r.process, r.wire || '', r.lot || '', r.ng, r.note, r.createdAt]; };
+const CSV_HEAD = ['사번','호기','주/야','작업시간','생산수량','날짜','이름','공정','선번','LOT','특이사항(비가동 사유)','제출시각'];
+const csvVals = r => { const w = roster().find(x => x.id === r.worker); return [r.worker, r.machine || '', r.shift, minsOf(r), r.qty, r.date, w ? w.name : '', r.process, r.wire || '', r.lot || '', r.note, r.createdAt]; };
 $('#copyTsv').addEventListener('click', async () => {
   const list = flatRows(); if (!list.length) { toast(t('noCopy')); return; }
   const tsv = [HEAD, ...list.map(rowVals)].map(a => a.map(v => String(v ?? '').replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
