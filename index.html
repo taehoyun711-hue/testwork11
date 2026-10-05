@@ -213,7 +213,7 @@ tr:last-child td{border-bottom:0}
 .section-h h2{margin:0;font-size:19px;font-weight:700}
 .hint{font-size:14px;color:var(--ink-3);margin:0}
 
-.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:rgba(43,38,32,.94);color:#fffaf3;padding:13px 20px;border-radius:14px;font-weight:600;font-size:15px;max-width:calc(100% - 32px);z-index:20;text-align:center}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:rgba(43,38,32,.94);color:#fffaf3;padding:13px 20px;border-radius:14px;font-weight:600;font-size:15px;max-width:calc(100% - 32px);z-index:20;text-align:center;word-break:keep-all}
 
 @media (max-width:640px){
   .filters{grid-template-columns:1fr 1fr}
@@ -436,6 +436,7 @@ const I18N = {
     autoNight: '07시 이전이라 {d}일 B조 작업으로 맞췄어요', needTimeFmt: '작업 {n}의 시각을 11:25처럼 적어 주세요',
     needName: '사번을 입력하세요', needDate: '날짜를 선택하세요', needProc: '작업 {n}의 공정을 선택하세요',
     needTime: '작업 {n}의 시작·종료 시각을 모두 고르세요', needQty: '생산수량을 하나 이상 입력하세요',
+    tooLong: '작업 {n}의 작업시간이 {h}시간을 넘어요. 시작·종료 시각을 확인하세요',
     done: '사번 {name} 실적이 제출됐어요 ({t})', sent: '실적을 제출했습니다',
     del: '삭제', deleted: '삭제했습니다', mineSub: '생산 {q} · {t} 제출',
     dateFmt: d => (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + '일월화수목금토'[d.getDay()] + '요일',
@@ -455,6 +456,7 @@ const I18N = {
     nightRule: 'វេន B៖ ការងាររហូតដល់មុនម៉ោង 07:00 ថ្ងៃទី {n} ត្រូវកត់ត្រាជាការងារថ្ងៃទី {d}',
     autoNight: 'ដោយសារមុនម៉ោង 07:00 បានកំណត់ជាការងារវេន B ថ្ងៃទី {d}', needTimeFmt: 'សូមសរសេរម៉ោងសម្រាប់ការងារទី {n} ដូចជា 11:25',
     needName: 'សូមបញ្ចូលអាយឌី', needDate: 'សូមជ្រើសរើសកាលបរិច្ឆេទ', needProc: 'សូមជ្រើសរើសផ្នែក សម្រាប់ការងារទី {n}',
+    tooLong: 'ម៉ោងធ្វើការសម្រាប់ការងារទី {n} លើសពី {h} ម៉ោង។ សូមពិនិត្យម៉ោងចាប់ផ្ដើម និងម៉ោងបញ្ចប់',
     needTime: 'សូមជ្រើសរើសម៉ោងចាប់ផ្ដើម និងម៉ោងបញ្ចប់ សម្រាប់ការងារទី {n}', needQty: 'សូមបញ្ចូលចំនួនផលិតយ៉ាងហោចណាស់មួយ',
     done: 'អាយឌី {name} បានដាក់ស្នើលទ្ធផលរួចរាល់ ({t})', sent: 'បានដាក់ស្នើរួចរាល់',
     del: 'លុប', deleted: 'បានលុបរួចរាល់', mineSub: 'ផលិត {q} · ដាក់ស្នើម៉ោង {t}',
@@ -718,9 +720,16 @@ function workMins(a, b){
 const minsOf = r => Number(r.mins ?? r.hours) || 0;
 function markEmpty(el){ el.querySelectorAll('select').forEach(s => s.classList.toggle('empty', !s.value)); }
 const NIGHT_CUT = 7 * 60;   // 야간조: 다음날 07:00 이전 작업은 전날(근무 시작일) 야간조 작업
+const MAX_MINS = 12 * 60;   // 한 작업의 작업시간이 이보다 길면 시각을 잘못 적은 것으로 보고 제출을 막음
 const curShift = () => document.querySelector('input[name=shift]:checked').value;
-// 주간조에서 1:00~6:59로 적으면 오후(13:00~18:59)로 해석
-function forShift(v){ return (v && curShift() === '주간' && toMin(v) < NIGHT_CUT) ? fromMin(toMin(v) + 720) : v; }
+// 주간조에서 1:00~6:59로 적으면 오후(13:00~18:59)로, 야간조에서 12:00~12:59로 적으면 밤 12시(00:00~00:59)로 해석
+function forShift(v){
+  if (!v) return v;
+  const m = toMin(v);
+  if (curShift() === '주간' && m < NIGHT_CUT) return fromMin(m + 720);
+  if (curShift() === '야간' && m >= 720 && m < 780) return fromMin(m - 720);
+  return v;
+}
 function readTimes(el){
   const id = el.dataset.id;
   const s0 = normTime($('#l' + id + '-start').value), e0 = normTime($('#l' + id + '-end').value);
@@ -851,6 +860,7 @@ $('#reportForm').addEventListener('submit', async e => {
     if (!l.process) { toast(t('needProc', { n: no })); return; }
     if (tm.start === null || tm.end === null) { toast(t('needTimeFmt', { n: no })); return; }
     if (!!l.start !== !!l.end) { toast(t('needTime', { n: no })); return; }
+    if (l.mins > MAX_MINS) { el.querySelectorAll('.tin').forEach(i => i.classList.add('bad')); toast(t('tooLong', { n: no, h: MAX_MINS / 60 })); return; }
     l.hours = l.mins;   // 예전 서버 코드와 호환 (작업시간 열에 분이 들어감)
     lines.push(l);
   }
