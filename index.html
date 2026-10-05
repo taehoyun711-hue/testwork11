@@ -1070,7 +1070,8 @@ async function checkUpdate(){
   if (!pageTime || currentView !== 'worker' || formBusy()) return;
   try {
     const t = lastMod(await fetch(PAGE_URL, { cache: 'no-cache' }));
-    if (t > pageTime && currentView === 'worker' && !formBusy()) location.reload();
+    // 1분 이상 새로워야 새 버전으로 봄 (같은 버전이라도 서버마다 수정 시각이 몇 초씩 다를 수 있음)
+    if (t > pageTime + 60000 && currentView === 'worker' && !formBusy()) location.reload();
   } catch(e){}
 }
 if (API_URL && !DEMO) {
