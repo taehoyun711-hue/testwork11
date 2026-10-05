@@ -1055,6 +1055,30 @@ $('#clearDemo').addEventListener('click', () => {
   local.set('demo-rows', '[]'); rows = []; renderAdmin(); loadMine(); toast('연습 데이터를 지웠습니다');
 });
 
+/* ---------- 새 버전 자동 적용 (작업자 화면) ---------- */
+// 사이트를 고쳐 올리면, 열어 둔 휴대폰도 화면으로 돌아올 때 새 버전으로 다시 불러옴. 입력 중이면 그대로 둠
+const PAGE_URL = location.href.split('#')[0];   // show()가 주소를 정리하기 전에 기억
+const startDate = $('#f-date').value, startShift = curShift();
+let pageTime = 0;   // 지금 화면 버전의 수정 시각
+const lastMod = r => Date.parse(r.headers.get('last-modified')) || 0;
+function formBusy(){
+  if ($('#f-worker').value.trim() !== (local.get('workerName') || '')) return true;
+  if ($('#f-date').value !== startDate || curShift() !== startShift || $('#f-note').value.trim()) return true;
+  return [...document.querySelectorAll('#lines input, #lines select')].some(el => el.value.trim());
+}
+async function checkUpdate(){
+  if (!pageTime || currentView !== 'worker' || formBusy()) return;
+  try {
+    const t = lastMod(await fetch(PAGE_URL, { cache: 'no-cache' }));
+    if (t > pageTime && currentView === 'worker' && !formBusy()) location.reload();
+  } catch(e){}
+}
+if (API_URL && !DEMO) {
+  // 브라우저에 저장된 지금 화면의 사본으로 버전을 기억한 뒤, 바로 한 번 확인
+  fetch(PAGE_URL, { cache: 'force-cache' }).then(r => { pageTime = lastMod(r); checkUpdate(); }).catch(() => {});
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkUpdate(); });
+}
+
 /* ---------- 시작 ---------- */
 const startHash = location.hash;   // show('worker')가 주소의 #admin 등을 지우기 전에 기억
 applyLang();
